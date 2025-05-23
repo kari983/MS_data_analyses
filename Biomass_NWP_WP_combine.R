@@ -93,7 +93,7 @@ p1_numba_total_biom <- ggplot(numba_total_biomass) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p1_numba_total_biom 
 
 ##############################################################################################################
-#(A) Non-woody Biomass by Plot in Numba
+#(A) Non-woody Biomass in Numba (700m)
 
 #Non-Woody data
 numba_NonWoody_biomass <- numba_biomass_data %>%
@@ -171,7 +171,7 @@ p1_numba_NW_biomass <- ggplot(numba_NonWoody_biomass) +
 
 
 ##########################################################################
-#(B) Woody Biomass by Plot in Numba
+#(B) Woody Biomass by in Numba (700m)
 numba_Woody_biomass <- numba_biomass_data %>%
   filter(Plants=="woody") %>%
   group_by(Gardens, Treatments) %>%
@@ -328,7 +328,7 @@ p1_yawan_total_biom <- ggplot(yawan_total_biomass) +
 
 
 #############################################################################################################
-# Non-woody Biomass by Plot in Yawan
+# Non-woody Biomass in Yawan (1700m)
 
 #(A) Non-Woody data
 yawan_NW_biomass <- yawan_biomass_data %>%
@@ -402,7 +402,7 @@ p_yawan_NW_biomass <- ggplot(yawan_NW_biomass) +
 
 
 
-#(B)  Woody Biomass by Plot in Yawan
+#(B)  Woody Biomass in Yawan (1700m)
 yawan_W_biomass <- yawan_biomass_data %>%
   filter(Plants=="woody") %>%
   group_by(Gardens, Treatments) %>%
@@ -447,10 +447,6 @@ contrast_list6 <- list("C - I"    = C  - I,
 
 post_hoc_test6 <- contrast(emm.yawan_W_biomass, method = contrast_list6)
 post_hoc_test6
-
-
-#Boxplot with pairwise comparison
-#nonWoody comparison
 
 #Errorbars with pairwise comparison
 p_yawan_W_biomass <- ggplot(yawan_W_biomass) +
