@@ -145,8 +145,7 @@ post_hoc_test3 <- contrast(emm.numba_NW_biom, method = contrast_list3)
 post_hoc_test3
 
 
-#Boxplot with pairwise comparison
-#nonWoody comparison
+#Errorbars with pairwise comparison
 p1_numba_NW_biomass <- ggplot(numba_NonWoody_biomass) +
   aes(x = Treatments, y = log(Biomass)) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.05) +
@@ -218,9 +217,7 @@ contrast_list4 <- list("C - I"    = C  - I,
 post_hoc_test4 <- contrast(emm.numba_W_biom , method = contrast_list4)
 post_hoc_test4
 
-#Boxplot with pairwise comparison
-#nonWoody comparison
-
+#Errorbars with pairwise comparison
 p1_numba_W_biomass <- ggplot(numba_Woody_biomass) +
   aes(x = Treatments, y = log(Biomass)) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.05) +
@@ -305,7 +302,7 @@ contrast_list2 <- list("C - I"    = C  - I,
 post_hoc_test2 <- contrast(emm.yawan_total_biom, method = contrast_list2)
 post_hoc_test2
 
-#Boxplot with pairwise comparison
+#Errorbars with pairwise comparison
 p1_yawan_total_biom <- ggplot(yawan_total_biomass) +
   aes(x = Treatments, y = log(Biomass)) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.05) +
@@ -379,8 +376,7 @@ post_hoc_test5 <- contrast(emm.yawan_NW_biomass, method = contrast_list5)
 post_hoc_test5
 
 
-#Boxplot with pairwise comparison
-#nonWoody comparison
+#Errorbars with pairwise comparison
 p_yawan_NW_biomass <- ggplot(yawan_NW_biomass) +
   aes(x = Treatments, y = log(Biomass)) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
@@ -438,10 +434,10 @@ emm.yawan_W_biomass <- emmeans(mod_yawan_W_biomass, specs = ~ Treatments)
 contrast(emm.yawan_W_biomass,"eff") # Comparisons with grand mean: effect of treatments: grand mean = mean(yawan_W_biomass$Biomass)
 emm_yawan_W_biomass_plot  <- plot(contrast(emm.yawan_W_biomass,"eff")) + geom_vline(xintercept=0, linetype=2) + theme_classic()
 
-
+#Mean groupings
 cldisplay_yawan_W_biomass <- cld(emm.yawan_W_biomass, Letters = letters,  alpha = 0.05)
 
-
+#Explicit contrast
 contrast_list6 <- list("C - I"    = C  - I,
                        "C  - W "   = C  - W,
                        "C  - WI "  = C  - WI,
@@ -456,6 +452,7 @@ post_hoc_test6
 #Boxplot with pairwise comparison
 #nonWoody comparison
 
+#Errorbars with pairwise comparison
 p_yawan_W_biomass <- ggplot(yawan_W_biomass) +
   aes(x = Treatments, y = log(Biomass)) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
@@ -497,16 +494,6 @@ biomass_NWP_WP_plot <- cowplot::plot_grid(p1_numba_NW_biomass,
 
 #Saving plot
 ggsave("biomass_NWP_WP_plot.jpg", width = 25, height = 25, units = "cm")
-
-
-#combine for emmeans contrast plots
-#cowplot::plot_grid(emm_numba_NW_biomass_plot,
-                   #emm_numba_W_biomass_plot,
-                   #emm_numba_total_biomass_plot, 
-                   #emm_yawan_NW_biomass_plot,
-                   #emm_yawan_W_biomass_plot,
-                   #emm_yawan_total_biomass_plot,
-                   #ncol = 3, byrow = TRUE,labels = c('A', 'B','C','D','E','F'), align="hv")      
 
 
 
