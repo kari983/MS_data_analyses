@@ -22,7 +22,7 @@ rm(list=ls())
 numba_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
                             sheet="Numba_biomass_2023")
 
-#(A) Total biomass numba
+#(A) Combined biomass numba (700m)
 numba_total_biomass <- numba_biomass_data %>%
   group_by(Gardens, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
@@ -93,7 +93,7 @@ p1_numba_total_biom <- ggplot(numba_total_biomass) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p1_numba_total_biom 
 
 ##############################################################################################################
-#(A) Non-woody Biomass in Numba (700m)
+#(B) Non-woody Biomass in Numba (700m)
 
 #Non-Woody data
 numba_NonWoody_biomass <- numba_biomass_data %>%
@@ -171,7 +171,7 @@ p1_numba_NW_biomass <- ggplot(numba_NonWoody_biomass) +
 
 
 ##########################################################################
-#(B) Woody Biomass by in Numba (700m)
+#(C) Woody Biomass by in Numba (700m)
 numba_Woody_biomass <- numba_biomass_data %>%
   filter(Plants=="woody") %>%
   group_by(Gardens, Treatments) %>%
@@ -256,7 +256,7 @@ cowplot::plot_grid(p1_numba_NW_biomass,
 yawan_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
                                  sheet = "Yawan_biomass_2023")
 
-#(B) Total biomass yawan
+#(A) Combined biomass yawan (1700m)
 yawan_total_biomass <- yawan_biomass_data %>%
   group_by(Gardens, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
@@ -330,7 +330,7 @@ p1_yawan_total_biom <- ggplot(yawan_total_biomass) +
 #############################################################################################################
 # Non-woody Biomass in Yawan (1700m)
 
-#(A) Non-Woody data
+#(B) Non-Woody biomass in Yawan (1700m)
 yawan_NW_biomass <- yawan_biomass_data %>%
  filter(Plants=="non_woody") %>%
   group_by(Gardens, Treatments) %>%
@@ -402,7 +402,7 @@ p_yawan_NW_biomass <- ggplot(yawan_NW_biomass) +
 
 
 
-#(B)  Woody Biomass in Yawan (1700m)
+#(C)  Woody Biomass in Yawan (1700m)
 yawan_W_biomass <- yawan_biomass_data %>%
   filter(Plants=="woody") %>%
   group_by(Gardens, Treatments) %>%
@@ -471,13 +471,6 @@ p_yawan_W_biomass <- ggplot(yawan_W_biomass) +
         axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_yawan_W_biomass
-
-#combine for biomass
-cowplot::plot_grid(p_yawan_NW_biomass, 
-                   p_yawan_W_biomass,
-                   p1_yawan_total_biom, 
-                   ncol = 3, byrow = TRUE,labels = c('A', 'B','C'), align="hv")
-
 
 #combine for biomass
 biomass_NWP_WP_plot <- cowplot::plot_grid(p1_numba_NW_biomass,
