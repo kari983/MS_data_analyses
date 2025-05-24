@@ -404,7 +404,7 @@ p_yawan_W_biomass <- ggplot(yawan_W_biomass) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_yawan_W_biomass
 
-#combine plots for biomasses
+#combine plots for biomass
 biomass_NWP_WP_plot <- cowplot::plot_grid(p1_numba_NW_biomass,
                                           p1_numba_W_biomass,
                                           p1_numba_total_biom, 
