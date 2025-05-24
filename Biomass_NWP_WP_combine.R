@@ -22,7 +22,7 @@ rm(list=ls())
 numba_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
                                  sheet="Numba_biomass_2023")
 
-#(A) Combined biomass numba (700m)
+#(A) Combined biomass in numba (700m)
 numba_total_biomass <- numba_biomass_data %>%
   group_by(Gardens, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
@@ -221,7 +221,7 @@ p1_numba_W_biomass <- ggplot(numba_Woody_biomass) +
 yawan_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
                                  sheet = "Yawan_biomass_2023")
 
-#(A) Combined biomass yawan (1700m)
+#(A) Combined biomass in yawan (1700m)
 yawan_total_biomass <- yawan_biomass_data %>%
   group_by(Gardens, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
@@ -404,7 +404,7 @@ p_yawan_W_biomass <- ggplot(yawan_W_biomass) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_yawan_W_biomass
 
-#combine for biomass
+#combine plots for biomasses
 biomass_NWP_WP_plot <- cowplot::plot_grid(p1_numba_NW_biomass,
                                           p1_numba_W_biomass,
                                           p1_numba_total_biom, 
