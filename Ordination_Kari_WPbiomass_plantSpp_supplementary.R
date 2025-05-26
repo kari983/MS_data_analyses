@@ -192,8 +192,8 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
   scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
   scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
   geom_point(data=sites.long1_axes, 
-             aes(x=axis1, y=axis2, colour=Treatments, shape=Treatments), 
-             size=5) + 
+             aes(x=axis1, y=axis2, colour=Treatments), 
+             size=5, show.legend = TRUE) + 
   geom_segment(data=species.long1_filter, 
                aes(x=0, y=0, xend=axis1*1, yend=axis2*1), 
                colour="black", size=1, arrow=arrow(length = unit(3,"mm"))) +
@@ -208,11 +208,14 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
   theme_test() + theme(plot.title=element_text(hjust=0.5)) + 
-  xlim(-1.5,2.2) + ylim(-2.5,1.5); numba_WP_RDA_plot 
-
-
-#Saving ordination plot
-ggsave("numba_WP_RDA_plot.jpg", width = 23, height = 20, units = "cm")
+  xlim(-2.2,2.2) + ylim(-2.5,1.5) +
+  theme(legend.position = c(0.1, 0.15),
+        legend.direction = "vertical") +
+  annotate(geom="text", x=c(-0.4,-1.0,1.8,0.9), 
+                       y= c(0.8,-1.4,-0.5,-1), 
+                        label=c("C","I","W","WI"), size=7,
+                        color=c("red", "darkgreen","grey","blue")) +
+  scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "darkgreen","grey","blue")); numba_WP_RDA_plot 
 
 
 #How to read RDA ordination plot
@@ -390,8 +393,8 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
   scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
   scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
   geom_point(data=sites.long2, 
-             aes(x=axis1, y=axis2, colour=Treatments, shape=Treatments), 
-             size=5) + 
+             aes(x=axis1, y=axis2, colour=Treatments), 
+             size=5, show.legend = TRUE) + 
   geom_segment(data=species.long2_filter, 
                aes(x=0, y=0, xend=axis1*1.1, yend=axis2*1.1), 
                colour="black", size=1, arrow=arrow(length = unit(3,"mm"))) +
@@ -404,14 +407,19 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
                         color=Treatments, 
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
-  xlim(-1.4,1.7) + ylim(-2.5,2) +  
-  theme_test() +  theme(plot.title=element_text(hjust=0.5)); yawan_WP_RDA_plot
+  xlim(-1.4,1.8) + ylim(-2.5,2) +  
+  theme_test() +  theme(plot.title=element_text(hjust=0.5)) +
+  theme(legend.position = c(0.18,0.15),
+        legend.direction = "vertical") +
+  annotate(geom="text", x=c(-1.32,-0.45,0.6,0.9), 
+                       y= c(-0.2,-0.8,1.2,-1), 
+                       label=c("C","I","W","WI"), size=7,
+                       color=c("red", "grey","darkorange","blue")) +
+  scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "grey","darkorange","blue")); yawan_WP_RDA_plot 
 
 
 #Saving ordination plot
-ggsave("yawan_WP_RDA_plot.jpg", width = 23, height = 20, units = "cm")
-
-
+#ggsave("yawan_WP_RDA_plot.jpg", width = 23, height = 20, units = "cm")
 
 
 #####---------------------------------------------------------
@@ -440,5 +448,14 @@ legend <- get_legend(numba_WP_RDA_plot +
                        theme(legend.position = "bottom")) 
 
 
-plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1), vjust = 1)
+RDA.spp.plot <- plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1), vjust = 1); RDA.spp.plot
+
+
+#Saving ordination plot
+ggsave("RDA.spp.plot.jpg", width = 37, height = 22, units = "cm")
+
+
+
+
+
 
