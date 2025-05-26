@@ -275,11 +275,10 @@ ggsave("yawan_RDA_main_plot.jpg", width = 20, height = 18, units = "cm")
 library(grid)
 library(cowplot)
 
-combine_RDA_main_plot <- cowplot::plot_grid(numba_RDA_main_plot,
+combine_WP_RDA_main_plot <- cowplot::plot_grid(numba_RDA_main_plot,
                    yawan_RDA_main_plot, 
-                   ncol = 2, byrow = TRUE,labels = c('A', 'B'), align="hv") ;combine_RDA_main_plot
+                   ncol = 2, byrow = TRUE,labels = c('A', 'B'), align="hv") ;combine_WP_RDA_main_plot
 
 #Saving ordination plot
-ggsave("combine_RDA_main_plot.jpg", width = 30, height = 18, units = "cm")
-
+ggsave("combine_WP_RDA_main_plot.jpg", width = 30, height = 18, units = "cm")
 
