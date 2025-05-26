@@ -194,6 +194,7 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
   geom_point(data=sites.long1_axes, 
              aes(x=axis1, y=axis2, colour=Treatments), 
              size=5, show.legend = TRUE) + 
+  geom_point(data=centroid1, size=3, shape=22, fill= c("red", "darkgreen","grey","blue"), color="black") +
   geom_segment(data=species.long1_filter, 
                aes(x=0, y=0, xend=axis1*1, yend=axis2*1), 
                colour="black", size=1, arrow=arrow(length = unit(3,"mm"))) +
@@ -212,7 +213,7 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
   theme(legend.position = c(0.1, 0.15),
         legend.direction = "vertical") +
   annotate(geom="text", x=c(-0.4,-1.0,1.8,0.9), 
-                       y= c(0.8,-1.4,-0.5,-1), 
+                       y= c(0.7,-1.4,-0.5,-1), 
                         label=c("C","I","W","WI"), size=7,
                         color=c("red", "darkgreen","grey","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "darkgreen","grey","blue")); numba_WP_RDA_plot 
@@ -395,6 +396,7 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
   geom_point(data=sites.long2, 
              aes(x=axis1, y=axis2, colour=Treatments), 
              size=5, show.legend = TRUE) + 
+  geom_point(data=centroid2, size=3, shape=22, fill= c("red", "grey","darkorange","blue"), color="black") +
   geom_segment(data=species.long2_filter, 
                aes(x=0, y=0, xend=axis1*1.1, yend=axis2*1.1), 
                colour="black", size=1, arrow=arrow(length = unit(3,"mm"))) +
@@ -411,8 +413,8 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
   theme_test() +  theme(plot.title=element_text(hjust=0.5)) +
   theme(legend.position = c(0.18,0.15),
         legend.direction = "vertical") +
-  annotate(geom="text", x=c(-1.32,-0.45,0.6,0.9), 
-                       y= c(-0.2,-0.8,1.2,-1), 
+  annotate(geom="text", x=c(-1.32,-0.45,0.45,0.9), 
+                       y= c(-0.2,-0.8,1.2,-1.3), 
                        label=c("C","I","W","WI"), size=7,
                        color=c("red", "grey","darkorange","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "grey","darkorange","blue")); yawan_WP_RDA_plot 
