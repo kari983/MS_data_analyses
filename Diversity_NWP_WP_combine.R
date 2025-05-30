@@ -538,4 +538,3 @@ Diversity_NWP_WP_plot <- cowplot::plot_grid(p_NWP_numba_richness,
 ggsave("Diversity_NWP_WP_plot.tiff", width = 20, height = 22, units = "cm", dpi = 600)
 
 
-
