@@ -11,7 +11,7 @@ library(ggpubr)
 library(car)
 
 #Clear the environment
-rm(list=ls()) 
+#rm(list=ls()) 
 
 
 ######################################################################################################
@@ -525,14 +525,17 @@ p_W_yawan_richness <- ggplot(W_yawan_richness2) +
 
 #-----------------------------------------------------------------------------------------------------
 #ALL combine plots for richness
-cowplot::plot_grid(p_NWP_numba_richness, 
+Diversity_NWP_WP_plot <- cowplot::plot_grid(p_NWP_numba_richness, 
                    p_W_numba_richness,
                    p_numba_total_rich,
                    p_NWP_yawan_richness, 
                    p_W_yawan_richness,
                    p_yawan_total_rich,
-                   ncol = 3, byrow = TRUE,labels = c('A', 'B','C','D','E','F'), align="hv")
+                   ncol = 3, byrow = TRUE,labels = c('A', 'B','C','D','E','F'), align="hv") ; Diversity_NWP_WP_plot
 
+
+#Saving ordination plot in tiff format (dpi = 600)
+ggsave("Diversity_NWP_WP_plot.tiff", width = 20, height = 22, units = "cm", dpi = 600)
 
 
 
