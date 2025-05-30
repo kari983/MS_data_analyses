@@ -206,7 +206,7 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
                         color=Treatments, 
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
-  theme_test() + 
+  theme_classic() +
   theme(legend.position = c(0.85, 0.15),
         legend.direction = "vertical") +
   annotate(geom="text", x=c(-0.45,-1.1,1.8,1), 
@@ -412,7 +412,7 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
                         color=Treatments, 
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
-  theme_test() +  
+  theme_classic() + 
   theme(legend.position = c(0.15,0.15),
         legend.direction = "vertical") +
   annotate(geom="text", x=c(-0.5,-0.5,0.5,1.0), 
@@ -615,7 +615,7 @@ numba_NWP_RDA_plot <- ggplot(sites.long3_axes, aes(x=axis1, y=axis2, color=Treat
                         color=Treatments, 
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
-  theme_test() + 
+  theme_classic() + 
   theme(legend.position = c(0.85, 0.15),
         legend.direction = "vertical") +
   annotate(geom="text", x=c(-0.3,-1,0.65,0.4), 
@@ -821,7 +821,7 @@ yawan_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=Treat
                         color=Treatments, 
                         fill=after_scale(alpha(colour, 0.2))), # Use a transparent version of colour for fill
                     expand=0, show.legend=FALSE) + 
-  theme_test() +  
+  theme_classic() +  
   theme(legend.position = c(0.15,0.15),
         legend.direction = "vertical") +
   annotate(geom="text", x=c(-0.5,-0.7,0.43,0.5), 
@@ -833,7 +833,7 @@ yawan_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=Treat
   theme(legend.title = element_text(size=19),legend.text=element_text(size=17)) +
   theme(axis.text=element_text(size=17,face = "bold"),
         axis.title=element_text(size=17,face = "bold")) +
-  theme(axis.title.x = element_text(hjust=0.8, face = "bold"),
+  theme(axis.title.x = element_text(hjust=0.5, face = "bold"),
         axis.title.y = element_text(hjust=0.5,face = "bold")) +
   coord_cartesian(xlim = c(-2.5, 0.8), ylim = c(-3, 3)); yawan_NWP_RDA_plot
 
@@ -853,6 +853,16 @@ RDA.combine.spp.plot <-  cowplot::plot_grid(numba_NWP_RDA_plot,
                                             yawan_WP_RDA_plot, 
                                             ncol = 2, byrow = TRUE,labels = c('A', 'B', 'C', 'D'),
                                             label_size = 22,align="hv"); RDA.combine.spp.plot
+
+
+#RDA.combine.spp.plot <- ggarrange(numba_NWP_RDA_plot,  
+          #numba_WP_RDA_plot,
+          #yawan_NWP_RDA_plot,
+          #yawan_WP_RDA_plot,
+          #ncol = 2, nrow = 2,
+          #labels = c('A', 'B','C','D')); RDA.combine.spp.plot
+
+
 
 #Saving ordination plot as jpg format
 #ggsave("RDA.combine.spp.plot.jpg", width = 40, height = 37, units = "cm")
