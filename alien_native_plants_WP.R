@@ -11,7 +11,7 @@ library(ggpubr)
 library(car)
 
 #delete all the variables that are there in the environment
-rm(list=ls()) 
+#rm(list=ls()) 
 
 
 ##############################################################################################################
@@ -81,19 +81,19 @@ biom_numba_Alien <- ggplot(numba_biomass_Alien) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.02) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="logit (Alien plants biomass)") + ggtitle("700m") + ylim(-7.7,3.2) +
+  labs(x="Treatments") + labs (y="logit (Alien WP biomass)") + ggtitle("700m") + ylim(-7.7,3.2) +
   geom_bracket(
     xmin = c(1,1), xmax = c(2,4),
     y.position = c(1.8,2.9), label = c("**","**"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;biom_numba_Alien
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")) ;biom_numba_Alien
 
 ################################################################################################################################
 #Alien woody plants at Yawan (1700m):Biomass
@@ -160,13 +160,13 @@ biom_yawan_Alien <- ggplot(yawan_biomass_Alien) +
     y.position = c(1.8), label = c("*"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;biom_yawan_Alien
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")) ;biom_yawan_Alien
 
 ################################################################################################################################
 #Alien woody plants at Numba (700m): Richness
@@ -239,20 +239,20 @@ rich_numba_Alien <- ggplot(numba_rich_Alien_spp) +
   geom_jitter(size=3, shape=20, col= "grey", width = 0.02) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="logit (Alien plants richness)") + ggtitle("700m") + ylim(-4.7,-2.7) +
+  labs(x="Treatments") + labs (y="logit (Alien WP richness)") + ggtitle("700m") + ylim(-4.7,-2.7) +
   #geom_text(data = cldisplay_numba_w.biom_status, aes(y = 4, label = .group)) +
   geom_bracket(
       xmin = c(1), xmax = c(2),
       y.position = c(-3.1), label = c("*"),label.size = 7,
       tip.length = 0.0, color="blue") +
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;rich_numba_Alien
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")) ;rich_numba_Alien
 
 ################################################################################################################################
 #Alien woody plants at Yawan (1700m): Richness
@@ -334,31 +334,14 @@ rich_yawan_Alien <- ggplot(yawan_rich_Alien_spp) +
       y.position = c(-3), label = c("*"),label.size = 7,
       tip.length = 0.0, color="blue") +
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;rich_yawan_Alien
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 0.5, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")) ;rich_yawan_Alien
 
-
-#-----------------------------------------------------------------------------------------------------------------
-#COMBINE PLOTS
-#ALL plots combine
-AlienNativePlotWP <- ggarrange(biom_numba_Alien + rremove("xlab"), 
-                    biom_yawan_Alien + rremove("xlab"), 
-                    rich_numba_Alien, 
-                    rich_yawan_Alien,# remove axis labels from plots
-                    labels = c('A', 'B','C','D'),
-                    ncol = 2, nrow = 2,
-                    common.legend = FALSE, legend = "none",
-                    align = "hv", 
-                    font.label = list(size = 13, color = "black", face = "bold", family = NULL, position = "top")); AlienNativePlotWP
-
-
-#Saving ordination plot
-ggsave("AlienNativePlotWP.jpg", width = 19, height = 21.5, units = "cm")
 
 #-----------------------------------------------------------------------------------------------------------------
 #COMBINE PLOTS
@@ -379,5 +362,4 @@ AlienNativePlotWP <- ggarrange(biom_numba_Alien + rremove("xlab"),
 
 #Saving ordination plot in tiff format (dpi = 600)
 ggsave("AlienNativePlotWP.tiff", width = 20, height = 22, units = "cm", dpi = 600)
-
 
