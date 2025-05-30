@@ -16,7 +16,7 @@ library(dplyr)
 #setwd("C:/Users/Kari Iamba/Documents/working/directory")
 
 #delete all the variables that are there in the environment
-rm(list=ls()) 
+#rm(list=ls()) 
 
 
 #############################################################################################################
@@ -91,7 +91,7 @@ g1 <- ggplot(Plot_Woody4) +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
         axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));  g1 
@@ -168,7 +168,7 @@ g2 <- ggplot(yawan_woody_biomass4) +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
         axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); g2  
@@ -266,7 +266,7 @@ g3 <- ggplot(numba_biomass_richness6) +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
         axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ; g3
@@ -352,7 +352,7 @@ g4 <- ggplot(yawan_biomass_richness5) +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+  theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
         axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); g4 
@@ -360,6 +360,13 @@ g4 <- ggplot(yawan_biomass_richness5) +
 
 #----------------------------------------------------------------------------------------------------
 #All plots combine
-cowplot::plot_grid(g1, g2, g3 , g4,
-                   ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv")
+#LRR_WP_biomass_plot <- cowplot::plot_grid(g1, g2, g3 , g4,
+                   #ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv"); LRR_WP_biomass_plot
+
+LRR_WP_biomass_plot <- ggarrange(g1, g2, g3 , g4, ncol = 2, nrow = 2,
+          labels = c('A', 'B','C','D')); LRR_WP_biomass_plot
+
+
+#Saving ordination plot in tiff format (dpi = 600)
+ggsave("LRR_WP_biomass_plot.tiff", width = 20, height = 20, units = "cm", dpi = 600)
 
