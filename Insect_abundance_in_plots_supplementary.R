@@ -17,6 +17,9 @@ library(nlme)
 library(car)
 library(ggpubr)
 
+#delete all the variables that are there in the environment
+#rm(list=ls()) 
+
 ##########################################################################################################################################
 #Total Insect abundance for separate sites
 #################################################################################################
@@ -82,13 +85,13 @@ g1 <- ggplot(numba_insect_data) +
             y.position = c(470,548), label = c("***","***"),label.size = 7,
             tip.length = 0.0, color="blue") + 
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); g1
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.35, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")); g1
 
 
 #Yawan data
@@ -149,13 +152,13 @@ g2 <- ggplot(yawan_insect_data) +
     y.position = c(380,460), label = c("***","***"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"))
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.35, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")) ;g2
 
 
 #combine for plots
@@ -228,13 +231,13 @@ gg1 <- ggplot(numba_herbivore_data) +
     y.position = c(390,500), label = c("***","***"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); gg1
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.35, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")); gg1
 
 
 #Yawan data
@@ -295,23 +298,28 @@ gg2 <- ggplot(yawan_insect_data) +
     y.position = c(400,490), label = c("**","*"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
-  theme(plot.title=element_text(hjust=0.5)) +
+  theme(plot.title=element_text(hjust=0.5, size = 17)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); gg2
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.35, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=15, margin = margin(0,8), face="bold")); gg2
 
 
+#--------------------------------------------------------------------------------------------------------------
 #combine for plots
-cowplot::plot_grid(gg1 , gg2,
-                   ncol = 2, byrow = TRUE,labels = c('(A)', '(B)'), align="hv")
+#cowplot::plot_grid(gg1 , gg2,
+                   #ncol = 2, byrow = TRUE,labels = c('A', 'B'), align="hv")
 
 #ALL combine
-cowplot::plot_grid(g1, g2,
+insect_abundance_plot <-cowplot::plot_grid(g1, g2,
                    gg1 , gg2,
-                   ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv")
+                   ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv", label_size = 16); insect_abundance_plot
+
+
+#Saving ordination plot in tiff format (dpi = 600)
+ggsave("insect_abundance_plot.tiff", width = 20, height = 24, units = "cm", dpi = 600)
 
 
   
