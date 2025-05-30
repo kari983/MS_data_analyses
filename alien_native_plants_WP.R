@@ -360,3 +360,24 @@ AlienNativePlotWP <- ggarrange(biom_numba_Alien + rremove("xlab"),
 #Saving ordination plot
 ggsave("AlienNativePlotWP.jpg", width = 19, height = 21.5, units = "cm")
 
+#-----------------------------------------------------------------------------------------------------------------
+#COMBINE PLOTS
+#ALL plots combine
+AlienNativePlotWP <- ggarrange(biom_numba_Alien + rremove("xlab"), 
+                    biom_yawan_Alien + rremove("xlab"), 
+                    rich_numba_Alien, 
+                    rich_yawan_Alien,# remove axis labels from plots
+                    labels = c('A', 'B','C','D'),
+                    ncol = 2, nrow = 2,
+                    common.legend = FALSE, legend = "none",
+                    align = "hv", 
+                    font.label = list(size = 16, color = "black", face = "bold", family = NULL, position = "top")); AlienNativePlotWP
+
+
+#Saving ordination plot
+#ggsave("AlienNativePlotWP.jpg", width = 19, height = 21.5, units = "cm")
+
+#Saving ordination plot in tiff format (dpi = 600)
+ggsave("AlienNativePlotWP.tiff", width = 20, height = 22, units = "cm", dpi = 600)
+
+
