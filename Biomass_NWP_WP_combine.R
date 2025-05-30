@@ -414,8 +414,11 @@ biomass_NWP_WP_plot <- cowplot::plot_grid(p1_numba_NW_biomass,
                                           p1_yawan_total_biom,
                                           ncol = 3, byrow = TRUE,labels = c('A', 'B','C','D','E','F'), align="hv"); biomass_NWP_WP_plot 
 
-#Saving plot
-ggsave("biomass_NWP_WP_plot.jpg", width = 25, height = 25, units = "cm")
+#Saving plot as jpg format
+#ggsave("biomass_NWP_WP_plot.jpg", width = 25, height = 25, units = "cm")
+
+#Saving ordination plot in tiff format (dpi = 600)
+ggsave("biomass_NWP_WP_plot.tiff", width = 20, height = 22, units = "cm", dpi = 600)
 
 
 
