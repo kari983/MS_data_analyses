@@ -153,7 +153,7 @@ biom_yawan_Alien <- ggplot(yawan_biomass_Alien) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.02) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="") + ggtitle("1700m") + ylim(-7.7,3.2) +
+  labs(x="Treatments") + labs (y="logit (Alien WP biomass)") + ggtitle("1700m") + ylim(-7.7,3.2) +
   #geom_text(data = cldisplay_numba_w.biom_status, aes(y = 4, label = .group)) +
   geom_bracket(
     xmin = c(1), xmax = c(4),
@@ -328,7 +328,7 @@ rich_yawan_Alien <- ggplot(yawan_rich_Alien_spp) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.02) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="") + ggtitle("1700m") + ylim(-4.7,-2.7) +
+  labs(x="Treatments") + labs (y="logit (Alien WP richness)") + ggtitle("1700m") + ylim(-4.7,-2.7) +
   geom_bracket(
       xmin = c(1), xmax = c(3),
       y.position = c(-3), label = c("*"),label.size = 7,
@@ -346,9 +346,10 @@ rich_yawan_Alien <- ggplot(yawan_rich_Alien_spp) +
 #-----------------------------------------------------------------------------------------------------------------
 #COMBINE PLOTS
 #ALL plots combine
-AlienNativePlotWP <- ggarrange(biom_numba_Alien + rremove("xlab"), 
-                    biom_yawan_Alien + rremove("xlab"), 
-                    rich_numba_Alien, 
+AlienNativePlotWP <- ggarrange(
+                    biom_numba_Alien + rremove("xlab"), 
+                    rich_numba_Alien + rremove("xlab"), 
+                    biom_yawan_Alien, 
                     rich_yawan_Alien,# remove axis labels from plots
                     labels = c('A', 'B','C','D'),
                     ncol = 2, nrow = 2,
