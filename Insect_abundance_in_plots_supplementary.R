@@ -142,7 +142,7 @@ g2 <- ggplot(yawan_insect_data) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="") + labs (y="") + ggtitle("1700m") + ylim(0,560) +
+  labs(x="") + labs (y="Total insect abundance") + ggtitle("1700m") + ylim(0,560) +
   #annotate("text", 
   #label = c("ab","a","c","bc"),
   #x = c(1,2,3,4), 
@@ -288,7 +288,7 @@ gg2 <- ggplot(yawan_insect_data) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="") + labs (y="") + ggtitle("1700m") + ylim(0,560) +
+  labs(x="") + labs (y="Herbivore abundance") + ggtitle("1700m") + ylim(0,560) +
   #annotate("text", 
   #label = c("ab","a","c","bc"),
   #x = c(1,2,3,4), 
@@ -313,8 +313,7 @@ gg2 <- ggplot(yawan_insect_data) +
                    #ncol = 2, byrow = TRUE,labels = c('A', 'B'), align="hv")
 
 #ALL combine
-insect_abundance_plot <-cowplot::plot_grid(g1, g2,
-                   gg1 , gg2,
+insect_abundance_plot <-cowplot::plot_grid(g1, gg1, g2 , gg2,
                    ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv", label_size = 16); insect_abundance_plot
 
 
