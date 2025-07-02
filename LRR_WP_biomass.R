@@ -1,4 +1,3 @@
-
 # (H1): Insects are accelerating succession by suppressing grasses and herbs, 
 # and allow woody plants to establish.
 
@@ -363,7 +362,7 @@ g4 <- ggplot(yawan_biomass_richness5) +
 #LRR_WP_biomass_plot <- cowplot::plot_grid(g1, g2, g3 , g4,
                    #ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv"); LRR_WP_biomass_plot
 
-LRR_WP_biomass_plot <- ggarrange(g1, g2, g3 , g4, ncol = 2, nrow = 2,
+LRR_WP_biomass_plot <- ggarrange(g1, g3, g2 , g4, ncol = 2, nrow = 2,
           labels = c('A', 'B','C','D')); LRR_WP_biomass_plot
 
 
