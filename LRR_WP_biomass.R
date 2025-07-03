@@ -1,6 +1,3 @@
-# (H1): Insects are accelerating succession by suppressing grasses and herbs, 
-# and allow woody plants to establish.
-
 # load the packages
 library(readxl)
 library(vegan)
