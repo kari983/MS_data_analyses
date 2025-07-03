@@ -1,5 +1,3 @@
-# (H2)
-
 # load the packages
 library(readxl)
 library(vegan)
