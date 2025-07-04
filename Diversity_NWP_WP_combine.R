@@ -27,10 +27,10 @@ yawan_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data
 
 ##################################################################################################
 ##################################################################################################
-# RICHNESS IN NUMBA (700m)
+#DIVERSITY IN NUMBA (700m)
 ########################################################################################
 
-#(A) Total richness in Numba (700m)
+#(A) Total diversity in Numba (700m)
 Total_numba_richness  <-  numba_biomass_data %>%
   group_by(Gardens, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg)) 
@@ -108,7 +108,7 @@ p_numba_total_rich <- ggplot(Total_numba_richness2) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_numba_total_rich
 
 #-------------------------------------------
-#(B) NWP richness in Numba (700m)
+#(B) NWP diversity in Numba (700m)
 NWP_numba_richness  <-  numba_biomass_data %>%
   filter(Plants=="non_woody") %>%
   group_by(Gardens, Treatments, Plant_sp) %>%
@@ -271,10 +271,10 @@ p_W_numba_richness <- ggplot(W_numba_richness2) +
 
 
 ##################################################################################################
-#RICHNESS IN YAWAN (1700m)
+#DIVERSITY IN YAWAN (1700m)
 ########################################################################################
 
-#(A) Total richness Yawan (1700m)
+#(A) Total diversity Yawan (1700m)
 Total_yawan_richness  <-  yawan_biomass_data %>%
   group_by(Gardens, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  
@@ -356,7 +356,7 @@ p_yawan_total_rich <- ggplot(Total_yawan_richness2) +
   theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_yawan_total_rich 
 
 #-------------------------------------------
-#(B) NWP richness in Yawan (1700m)
+#(B) NWP diversity in Yawan (1700m)
 NWP_yawan_richness  <-  yawan_biomass_data %>%
   filter(Plants=="non_woody") %>%
   group_by(Gardens, Treatments, Plant_sp) %>%
@@ -436,7 +436,7 @@ p_NWP_yawan_richness <- ggplot(NWP_yawan_richness2) +
 
 
 #-------------------------------------------
-#(C) Woody richness in Yawan (1700m)
+#(C) Woody diversity in Yawan (1700m)
 W_yawan_richness  <-  yawan_biomass_data %>%
   filter(Plants=="woody") %>%
   group_by(Gardens, Treatments, Plant_sp) %>%
@@ -524,7 +524,7 @@ p_W_yawan_richness <- ggplot(W_yawan_richness2) +
 
 
 #-----------------------------------------------------------------------------------------------------
-#ALL combine plots for richness
+#ALL combine plots for diversity
 Diversity_NWP_WP_plot <- cowplot::plot_grid(p_NWP_numba_richness, 
                    p_W_numba_richness,
                    p_numba_total_rich,
@@ -536,5 +536,10 @@ Diversity_NWP_WP_plot <- cowplot::plot_grid(p_NWP_numba_richness,
 
 #Saving ordination plot in tiff format (dpi = 600)
 ggsave("Diversity_NWP_WP_plot.tiff", width = 20, height = 22, units = "cm", dpi = 600)
+
+
+
+
+
 
 
