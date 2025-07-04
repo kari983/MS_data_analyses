@@ -126,7 +126,7 @@ adonis2(species.Hellinger1 ~ Treatments,data = numba_WP_env,method = "euclidean"
 #pairwise comparison
 #library(pairwiseAdonis)
 #set.seed(10)
-pairwise.adonis(numba_WP_spp, numba_WP_env$Treatments)
+#pairwise.adonis(numba_WP_spp, numba_WP_env$Treatments)
 
 
 #RDA PLOTTING for Numba Woody Biomass
@@ -535,9 +535,8 @@ anova.cca(Ordination.model3, by = "terms", permutations= 999)
 #adonis2(species.Hellinger3 ~ Treatments,data = numba_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
 
 #pairwise comparison
-library(pairwiseAdonis)
-set.seed(10)
-pairwise.adonis(numba_NWP_spp, numba_NWP_env$Treatments)
+anova(Ordination.model3, by = "onedf", perm = 999)
+
 
 
 #RDA PLOTTING for Numba Woody Biomass
