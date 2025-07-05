@@ -1,5 +1,11 @@
 Metadata for the MS Analyses
 
-This is the data and code for the MS titled: "Insects and non-woody plants slow down tropical forest succession: a community-wide experiment in Papua New Guinea".
+This is the dataset and code for the MS titled: "Insects and non-woody plants slow down tropical forest succession: a community-wide experiment in Papua New Guinea".
 
-This repository consists of 5 scripts used for analysis, model summary, and plotting. They are located within the working directory. These scripts include:
+(A). Datasets
+
+Two datasets are used for the analyses: (1) main paper dataset and (2) supporting information data. The main paper dataset is called "Combine_Sites_Biomass_2023" and the supporting information dataset is called "CombineSite_Insects_Orders_data". 
+Below is the explaination of the data that are present in each columns and rows of "Combine_Sites_Biomass_2023" dataset.  
+
+This repository consists of 7 scripts used for analysis which include data arrangement, models, model statistics and plotting. They are located within the working directory. These scripts include:
+
