@@ -5,7 +5,8 @@ This is the dataset and code for the MS titled: "Insects and non-woody plants sl
 (A). Datasets
 
 Two datasets are used for the analyses: (1) main paper dataset and (2) supporting information data. The main paper dataset is called "Combine_Sites_Biomass_2023" and the supporting information dataset is called "CombineSite_Insects_Orders_data". 
-Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.  
+
+**Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.**  
 (1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
 (2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
 (3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
@@ -15,6 +16,8 @@ Below is the explaination of the data that are presented in each columns and row
 (7). Column 7 ("Growth_Form") contains the growth forms of the plant species.
 (8). Column 8 ("Status") categorises the plants to either alien or native.
 (9). Column 9 ("Biomass_kg") contains the fresh weights of individal plants in kg.
+
+**Below is the explaination of the data that are presented in each columns and rows of "CombineSite_Insects_Orders_data" dataset.** 
 
 
 
