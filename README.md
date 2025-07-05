@@ -4,7 +4,7 @@ This is the dataset and code for the MS titled: "Insects and non-woody plants sl
 
 (A). Datasets
 
-Two datasets are used for the analyses: (1) main paper dataset and (2) supporting information data. The main paper dataset is called "Combine_Sites_Biomass_2023" and the supporting information dataset is called "CombineSite_Insects_Orders_data". 
+Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" is used for main MS results while datasets "All_Insects_abundance" and "Herbivores_abundance" are used for supporting information results. 
 
 **Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.**  
 (1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
