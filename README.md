@@ -38,16 +38,19 @@ Two datasets are used for the analyses.
 
 (B). R codes
 
-This repository consists of 7 script files used for the analyses. Five scripts for the main MS section and two for supporting information. They are located within the working directory. These scripts include:
-(i). Main MS section
+This repository consists of 7 script files used for the analyses. Five scripts for the main manuscript (M)S section and two for supporting information. They are located within the working directory. These scripts include:
+(i). Main MS section R script files
 (1). Biomass_NWP_WP_combine.R: contains scripts for analyzing biomass of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI]. 
 (2). Diversity_NWP_WP_combine.R: contains scripts for analyzing divesity of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI].  
 (3). LRR_WP_biomass.R: contains scripts for calculation and analyses of log response ratios (LRR) of isolated effects of insects, non-woody plants and their combination based on woody plant biomass corresponding to each treatment [C, I, W, WI]. 
 (4). NWP+WP_RDA.R: contains scripts for analyzing divesity of non-woody plants (NWP) and woody plants (WP) species composition based on biomasses corresponding to each treatment [C, I, W, WI].  
 (5). alien_native_plants_WP.R: contains scripts for analyzing biomass of alien and native plants based on woody plant biomass corresponding to each treatment [C, I, W, WI]. 
 
-(ii). Supporting information
-(1). Insect_abundance_in_plots_supplementary.R: contains scripts for analyzing biomass of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI]. 
+(ii). Supporting information R script files
+(1). Insect_abundance_in_plots_supplementary.R: contains scripts for all insect abundance and herbivore abundance corresponding to each treatment [C, I, W, WI]. 
+(1). alien_native_plants_biomass_C-plots_supplementary.R: contains scripts for analyzing non-woody and woody alien and native plants based on biomass corresponding to each treatment [C, I, W, WI]. 
+
+(C). Information on statistical tables (in supporting information section of MS) 
 
 
 
