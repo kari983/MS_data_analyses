@@ -1,6 +1,7 @@
 Metadata for the MS Analyses
 
-This is the dataset and code for the MS titled: "Insects and non-woody plants slow down tropical forest succession: a community-wide experiment in Papua New Guinea".
+This is the dataset and R codes for the MS titled: "Insects and non-woody plants slow down tropical forest succession: a community-wide experiment in Papua New Guinea".
+Kari Sogera Iamba, Piotr Szefer, Kenneth Molem, Austin Sau, Gibson Maiah, Vojtech Novotny
 
 (A). Datasets
 
@@ -21,13 +22,17 @@ Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" i
 (ii). Rows
 (1). Rows: Each row contains a plant species with its biomass corresponding to a treatment plot at a specific elevation. Other information such as Family, Plants, Growth_Form and Status further describes the plant species. 
 
-**Below is the explaination of the data that are presented in each columns and rows of "CombineSite_Insects_Orders_data" dataset.** 
+**Below is the explaination of the data that are presented in each columns and rows of "All_Insects_abundance" dataset.** 
 (i). Columns
 (1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
 (2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
+(3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
+(4). Column 4 ("Order") contains the Orders of insects. 
+(5). Column 5 ("Guild") contains the feeding guilds of insects. 
+(6). Column 6 ("Abundance") contains the abundance of the insect Orders.
 
 (ii). Rows
-(1). Rows: Each row contains a plant species with its biomass corresponding to a treatment plot at a specific elevation. Other information such as Family, Plants, Growth_Form and Status further describes the plant species. 
+(1). Rows: Each row contains an insect Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the insect order. 
 
 
 
