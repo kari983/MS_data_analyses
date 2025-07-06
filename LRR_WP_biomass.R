@@ -14,64 +14,54 @@ library(dplyr)
 #delete all the variables that are there in the environment
 #rm(list=ls()) 
 
-
-#############################################################################################################
-#load the data for Numba (700m)
-H1_Plot_Woody <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                            sheet="Numba_biomass_2023")
+#Load combined site data
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/data/Combine_Sites_Biomass_2023.xlsx",
+                                        sheet="combine.site.biomass")
 
 ####################################################################################################################
-#Numba Woody biomass LRR
+#Woody biomass LRR at 700m
 ####################################################################################################################
 
-#(A) Numba Woody data (700m)
-Plot_Woody1 <- H1_Plot_Woody %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments) %>%
+#(A) Woody biomass at 700m
+Elev.700m_WP_biomass <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
 
-Plot_Woody2 <- Plot_Woody1  %>%
-  dcast(Gardens ~ Treatments, value.var='Biomass') 
+Elev.700m_WP_biomass2 <- Elev.700m_WP_biomass %>%
+  dcast(Blocks ~ Treatments, value.var='Biomass') 
 
 
 #Log Response Ratios
-Plot_Woody2$Insects <- log(Plot_Woody2$W/Plot_Woody2$WI) #insect effect
-Plot_Woody2$NWP     <- log(Plot_Woody2$I/Plot_Woody2$WI) #NWP effect
-Plot_Woody2$`NWP+Insects`    <- log(Plot_Woody2$C/Plot_Woody2$WI) #combine effect
+Elev.700m_WP_biomass2$Insects <- log(Elev.700m_WP_biomass2$W/Elev.700m_WP_biomass2$WI) #insect effect
+Elev.700m_WP_biomass2$NWP     <- log(Elev.700m_WP_biomass2$I/Elev.700m_WP_biomass2$WI) #NWP effect
+Elev.700m_WP_biomass2$`NWP+Insects`    <- log(Elev.700m_WP_biomass2$C/Elev.700m_WP_biomass2$WI) #combine effect
 
-Plot_Woody3 <- Plot_Woody2 %>% 
-  melt(id.vars = c("Gardens"),variable.name = "Treatments",
+Elev.700m_WP_biomass3 <- Elev.700m_WP_biomass2 %>% 
+  melt(id.vars = c("Blocks"),variable.name = "Treatments",
        value.name = "Biomass")
 
-Plot_Woody4 <- Plot_Woody3 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
+Elev.700m_WP_biomass4 <- Elev.700m_WP_biomass3 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
 
 #Plot_Woody4 <- Plot_Woody3[37:63,]
 
 # Model 
-mod_LRR1 <- lme(Biomass ~ 0 + Treatments, random = ~1|Gardens, data= Plot_Woody4) #setting reference to zero
+mod_Elev.700m_WP_LRR <- lme(Biomass ~ 0 + Treatments, random = ~1|Blocks, data= Elev.700m_WP_biomass4) #setting reference to zero
 
 # summary
-summary(mod_LRR1)
-anova(mod_LRR1)
+summary(mod_Elev.700m_WP_LRR)
+anova(mod_Elev.700m_WP_LRR)
 
 #Check for overdispersion
-dispersion <- sum(residuals(mod_LRR1, type = "pearson")^2/ df.residual(mod_LRR1))
+dispersion <- sum(residuals(mod_Elev.700m_WP_LRR, type = "pearson")^2/ df.residual(mod_Elev.700m_WP_LRR))
 dispersion 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_LRR1, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_LRR1, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
-
-# Custom contrasts
-emm_LRR1 = emmeans(mod_LRR1, specs = ~ Treatments)
-
-# Mean Groupings 
-#cldisplay_emm_LRR1  <- cld(emm_LRR1 , Letters = letters,  alpha = 0.05)
-#cldisplay_emm_LRR1 
-
+qqnorm(mod_Elev.700m_WP_LRR, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.700m_WP_LRR, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 #Error bars with pairwise comparison (refer to model summary for significant differences)
-g1 <- ggplot(Plot_Woody4) +
+gr1 <- ggplot(Elev.700m_WP_biomass4) +
   aes(x = Treatments, y = Biomass) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -81,74 +71,64 @@ g1 <- ggplot(Plot_Woody4) +
            label = c("**"),
            x = c(3), 
            y = c(1), size = 7, colour = "blue") +
-  labs(x="") + labs (y="LRR [biomass]") + ggtitle("700m") + ylim(-5,4) +
+  labs(x="") + labs (y="LRR [biomass]") + ggtitle("700m") + coord_cartesian(ylim = c(-5, 4)) +
   #geom_text(data = cldisplay_numba_w.biom_status, aes(y = 4, label = .group)) +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));  g1 
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));  gr1 
 
 
 
 ####################################################################################################################
-#Yawan Woody biomass LRR
+#Woody biomass LRR at 1700m
 ####################################################################################################################
-#Load data for Yawan (1700m)
-yawan_biomass_data  <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/google drive_backup/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                          sheet = "Yawan_biomass_2023")
 
-#(B) Woody data for Yawan (1700m)
-yawan_woody_biomass <- yawan_biomass_data  %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments) %>%
+#(B) Woody biomass of 1700m
+Elev.1700m_WP_biomass <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments) %>%
   summarise(Biomass = sum(Biomass_kg))
 
-yawan_woody_biomass2 <- yawan_woody_biomass   %>%
-  dcast(Gardens ~ Treatments, value.var='Biomass') 
+Elev.1700m_WP_biomass2 <- Elev.1700m_WP_biomass %>%
+  dcast(Blocks ~ Treatments, value.var='Biomass') 
 
 
 #Log Response Ratios
-yawan_woody_biomass2$Insects <- log(yawan_woody_biomass2$W/yawan_woody_biomass2$WI) #insect effect
-yawan_woody_biomass2$NWP     <- log(yawan_woody_biomass2$I/yawan_woody_biomass2$WI) #NWP effect
-yawan_woody_biomass2$`NWP+Insects`    <- log(yawan_woody_biomass2$C/yawan_woody_biomass2$WI) #combine effect
+Elev.1700m_WP_biomass2$Insects <- log(Elev.1700m_WP_biomass2$W/Elev.1700m_WP_biomass2$WI) #insect effect
+Elev.1700m_WP_biomass2$NWP     <- log(Elev.1700m_WP_biomass2$I/Elev.1700m_WP_biomass2$WI) #NWP effect
+Elev.1700m_WP_biomass2$`NWP+Insects`    <- log(Elev.1700m_WP_biomass2$C/Elev.1700m_WP_biomass2$WI) #combine effect
 
-yawan_woody_biomass3 <- yawan_woody_biomass2  %>% 
-  melt(id.vars = c("Gardens"),variable.name = "Treatments",
+Elev.1700m_WP_biomass3 <- Elev.1700m_WP_biomass2 %>% 
+  melt(id.vars = c("Blocks"),variable.name = "Treatments",
        value.name = "Biomass")
 
-yawan_woody_biomass4 <- yawan_woody_biomass3 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
+Elev.1700m_WP_biomass4 <- Elev.1700m_WP_biomass3 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
 
 #yawan_woody_biomass4 <- yawan_woody_biomass3[37:63,]
 
 # Model 
-mod_LRR2 <- lme(Biomass ~ 0 + Treatments, random = ~1|Gardens, data= yawan_woody_biomass4) #setting reference to zero
+mod_Elev.1700m_WP_LRR <- lme(Biomass ~ 0 + Treatments, random = ~1|Blocks, data= Elev.1700m_WP_biomass4) #setting reference to zero
 
 # summary
-summary(mod_LRR2)
-anova(mod_LRR2)
+summary(mod_Elev.1700m_WP_LRR)
+anova(mod_Elev.1700m_WP_LRR)
 
 #Check for overdispersion
-dispersion <- sum(residuals(mod_LRR1, type = "pearson")^2/ df.residual(mod_LRR1))
+dispersion <- sum(residuals(mod_Elev.1700m_WP_LRR, type = "pearson")^2/ df.residual(mod_Elev.1700m_WP_LRR))
 dispersion 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_LRR2, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_LRR2, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
-
-# Custom contrasts
-emm_LRR2 = emmeans(mod_LRR2, specs = ~ Treatments)
-
-# Mean Groupings 
-#cldisplay_emm_LRR2  <- cld(emm_LRR2 , Letters = letters,  alpha = 0.05)
-#cldisplay_emm_LRR2 
+qqnorm(mod_Elev.1700m_WP_LRR, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.1700m_WP_LRR, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 
 #Error bars with pairwise comparison (refer to model summary for significant differences)
-g2 <- ggplot(yawan_woody_biomass4) +
+gr2 <- ggplot(Elev.1700m_WP_biomass4) +
   aes(x = Treatments, y = Biomass) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -158,95 +138,84 @@ g2 <- ggplot(yawan_woody_biomass4) +
            label = c("***","***"),
            x = c(2,3), 
            y = c(0.4,0.4), size = 7, colour = "blue") +
-  labs(x="") + labs (y="LRR [biomass]") + ggtitle("1700m") +  ylim(-5,4) +
+  labs(x="") + labs (y="LRR [biomass]") + ggtitle("1700m") +  coord_cartesian(ylim = c(-5, 4)) +
   #geom_text(data = cldisplay_numba_w.biom_status, aes(y = 4, label = .group)) +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); g2  
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); gr2  
 
 
 #combine for biomass
-cowplot::plot_grid(g1 , g2,
+cowplot::plot_grid(gr1 , gr2,
                    ncol = 2, byrow = TRUE,labels = c('A', 'B'), align="hv")
 
 
 ####################################################################################################################
-#Numba Woody diversity LRR
+#Woody diversity LRR at 700m
 ####################################################################################################################
-#Date for Numba (700m)
-numba_biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/google drive_backup/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                                 sheet = "Numba_biomass_2023")
 
-#Woody plant biomass in Numba (700m)
-numba_biomass_richness   <-   numba_biomass_data   %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) 
+#Woody plant diversity at 700m
+Elev.700m_WP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))
 
-numba_biomass_richness2  <- numba_biomass_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-numba_biomass_richness2 [is.na(numba_biomass_richness2)] <- 0 #removing NAs
-numba_biomass_richness2 
+Elev.700m_WP_div2  <- Elev.700m_WP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-#Richness
-numba_biomass_richness2 $Richness <- specnumber(numba_biomass_richness2[,3:117]) #Number of plant species 
-numba_biomass_richness2 
+Elev.700m_WP_div2[is.na(Elev.700m_WP_div2)] <- 0 #removing NAs
+Elev.700m_WP_div2
 
 #Shannon diversity index
-numba_biomass_richness2$Shannon <- diversity(numba_biomass_richness2[,3:117], index="shannon")
-numba_biomass_richness2 
+Elev.700m_WP_div2$Shannon <- diversity(Elev.700m_WP_div2[,3:116], index="shannon")
+Elev.700m_WP_div2
+
+#Richness
+Elev.700m_WP_div2$Richness <- specnumber(Elev.700m_WP_div2[,3:116]) #Number of plant species 
+Elev.700m_WP_div2
 
 #dcast based on Shannon index
-numba_biomass_richness3  <- numba_biomass_richness2 %>% 
-  reshape2::dcast(Gardens ~ Treatments, value.var = "Shannon")
+Elev.700m_WP_div3  <- Elev.700m_WP_div2 %>% 
+  reshape2::dcast(Blocks ~ Treatments, value.var = "Shannon")
 
 #Log Response Ratios
-numba_biomass_richness3$Insects <- log(numba_biomass_richness3$W/numba_biomass_richness3$WI) #insect effect
-numba_biomass_richness3$NWP     <- log(numba_biomass_richness3$I/numba_biomass_richness3$WI) #NWP effect
-numba_biomass_richness3$`NWP+Insects`    <- log(numba_biomass_richness3$C/numba_biomass_richness3$WI) #combine effect
+Elev.700m_WP_div3$Insects <- log(Elev.700m_WP_div3$W/Elev.700m_WP_div3$WI) #insect effect
+Elev.700m_WP_div3$NWP     <- log(Elev.700m_WP_div3$I/Elev.700m_WP_div3$WI) #NWP effect
+Elev.700m_WP_div3$`NWP+Insects`    <- log(Elev.700m_WP_div3$C/Elev.700m_WP_div3$WI) #combine effect
 
-numba_biomass_richness4  <- numba_biomass_richness3   %>% 
-  melt(id.vars = c("Gardens"),variable.name = "Treatments",
+Elev.700m_WP_div4  <- Elev.700m_WP_div3 %>% 
+  melt(id.vars = c("Blocks"),variable.name = "Treatments",
        value.name = "Shannon")
 
-numba_biomass_richness5 <- numba_biomass_richness4[-47,] #remove infinite value
+Elev.700m_WP_div5 <- Elev.700m_WP_div4[-47,] #remove infinite value
 
-numba_biomass_richness6 <- numba_biomass_richness5 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
+Elev.700m_WP_div6 <- Elev.700m_WP_div5 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
 
 #numba_biomass_richness6 <- numba_biomass_richness5[c(37:62),]
 
-
 # Model 
-mod_LRR3 <- lme(Shannon ~ 0 + Treatments, random = ~1|Gardens, data= numba_biomass_richness6) #setting reference to zero
+mod_Elev.700m_WP_div_LRR <- lme(Shannon ~ 0 + Treatments, random = ~1|Blocks, data= Elev.700m_WP_div6) #setting reference to zero
 
 # summary
-summary(mod_LRR3)
-anova(mod_LRR3)
+summary(mod_Elev.700m_WP_div_LRR)
+anova(mod_Elev.700m_WP_div_LRR)
 
 #Check for overdispersion
-dispersion <- sum(residuals(mod_LRR3, type = "pearson")^2/ df.residual(mod_LRR3))
+dispersion <- sum(residuals(mod_Elev.700m_WP_div_LRR, type = "pearson")^2/ df.residual(mod_Elev.700m_WP_div_LRR))
 dispersion 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_LRR3, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_LRR3, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
-
-# Custom contrasts
-emm_LRR3 = emmeans(mod_LRR3, specs = ~ Treatments)
-
-# Mean Groupings 
-#cldisplay_emm_LRR3  <- cld(emm_LRR3 , Letters = letters,  alpha = 0.05)
-#cldisplay_emm_LRR3 
-
+qqnorm(mod_Elev.700m_WP_div_LRR, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.700m_WP_div_LRR, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 #Error bars with pairwise comparison (refer to model summary for significant differences)
-g3 <- ggplot(numba_biomass_richness6) +
+gr3 <- ggplot(Elev.700m_WP_div6) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -256,84 +225,72 @@ g3 <- ggplot(numba_biomass_richness6) +
            label = c("***","**"),
            x = c(2,3), 
            y = c(-0.3,0.1), size = 7, colour = "blue") +
-  labs(x="") + labs (y="LRR [diversity]") + ggtitle("700m") +  ylim(-3,0.7) +
+  labs(x="") + labs (y="LRR [diversity]") + ggtitle("700m") +  coord_cartesian(ylim = c(-3, 0.7)) +
   #geom_text(data = cldisplay_numba_w.biom_status, aes(y = 4, label = .group)) +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ; g3
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ; gr3
 
 
 ####################################################################################################################
-#Yawan Woody diversity LRR
+#Woody diversity LRR at 1700m
 ####################################################################################################################
-#Data for Yawan (1700m)
-yawan_biomass_data  <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/google drive_backup/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                                  sheet = "Yawan_biomass_2023")
-
-
-#Woody biomass in Yawan (1700m)
-yawan_biomass_richness   <-   yawan_biomass_data   %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#Woody biomass at 1700m
+Elev.1700m_WP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg)) 
 
-yawan_biomass_richness2  <- yawan_biomass_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.1700m_WP_div2  <- Elev.1700m_WP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-yawan_biomass_richness2[is.na(yawan_biomass_richness2)] <- 0 #removing NAs
-yawan_biomass_richness2
-
-#Richness
-yawan_biomass_richness2$Richness <- specnumber(yawan_biomass_richness2[,3:105]) #Number of plant species 
-yawan_biomass_richness2
+Elev.1700m_WP_div2[is.na(Elev.1700m_WP_div2)] <- 0 #removing NAs
+Elev.1700m_WP_div2
 
 #Shannon diversity index
-yawan_biomass_richness2$Shannon <- diversity(yawan_biomass_richness2[,3:105], index="shannon")
-yawan_biomass_richness2
+Elev.1700m_WP_div2$Shannon <- diversity(Elev.1700m_WP_div2[,3:105], index="shannon")
+Elev.1700m_WP_div2
+
+#Richness
+Elev.1700m_WP_div2$Richness <- specnumber(Elev.1700m_WP_div2[,3:105]) #Number of plant species 
+Elev.1700m_WP_div2
 
 #dcast based on Shannon index
-yawan_biomass_richness3  <- yawan_biomass_richness2 %>% 
-  reshape2::dcast(Gardens ~ Treatments, value.var = "Shannon")
+Elev.1700m_WP_div3  <- Elev.1700m_WP_div2 %>% 
+  reshape2::dcast(Blocks ~ Treatments, value.var = "Shannon")
 
 #Log Response Ratios
-yawan_biomass_richness3$Insects <- log(yawan_biomass_richness3$W/yawan_biomass_richness3$WI) #insect effect
-yawan_biomass_richness3$NWP     <- log(yawan_biomass_richness3$I/yawan_biomass_richness3$WI) #NWP effect
-yawan_biomass_richness3$`NWP+Insects`    <- log(yawan_biomass_richness3$C/yawan_biomass_richness3$WI) #combine effect
+Elev.1700m_WP_div3$Insects <- log(Elev.1700m_WP_div3$W/Elev.1700m_WP_div3$WI) #insect effect
+Elev.1700m_WP_div3$NWP     <- log(Elev.1700m_WP_div3$I/Elev.1700m_WP_div3$WI) #NWP effect
+Elev.1700m_WP_div3$`NWP+Insects`    <- log(Elev.1700m_WP_div3$C/Elev.1700m_WP_div3$WI) #combine effect
 
-yawan_biomass_richness4  <- yawan_biomass_richness3  %>% 
-  melt(id.vars = c("Gardens"),variable.name = "Treatments",
+Elev.1700m_WP_div4  <- Elev.1700m_WP_div3  %>% 
+  melt(id.vars = c("Blocks"),variable.name = "Treatments",
        value.name = "Shannon")
 
-yawan_biomass_richness5 <- yawan_biomass_richness4 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
+Elev.1700m_WP_div5 <- Elev.1700m_WP_div4 %>% filter(Treatments %in% c("Insects","NWP","NWP+Insects"))
 
 #yawan_biomass_richness5 <- yawan_biomass_richness4[37:63,]
 
 # Model 
-mod_LRR4 <- lme(Shannon ~ 0 + Treatments, random = ~1|Gardens, data= yawan_biomass_richness5) #setting reference to zero
+mod_Elev.1700m_WP_div_LRR <- lme(Shannon ~ 0 + Treatments, random = ~1|Blocks, data= Elev.1700m_WP_div5) #setting reference to zero
 
 # summary
-summary(mod_LRR4)
-anova(mod_LRR4)
+summary(mod_Elev.1700m_WP_div_LRR)
+anova(mod_Elev.1700m_WP_div_LRR)
 
 #Testing model
-qqnorm(mod_LRR4, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_LRR4, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
-
-# Custom contrasts
-emm_LRR4 = emmeans(mod_LRR4, specs = ~ Treatments)
-
-# Mean Groupings 
-#cldisplay_emm_LRR4  <- cld(emm_LRR4 , Letters = letters,  alpha = 0.05)
-#cldisplay_emm_LRR4 
+qqnorm(mod_Elev.1700m_WP_div_LRR, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.1700m_WP_div_LRR, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 
 #Plot with pairwise comparison
-g4 <- ggplot(yawan_biomass_richness5) +
+gr4 <- ggplot(Elev.1700m_WP_div5) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -343,26 +300,23 @@ g4 <- ggplot(yawan_biomass_richness5) +
            label = c("***","**"),
            x = c(2,3), 
            y = c(-0.2,0.4), size = 7, colour = "blue") +
-  labs(x="") + labs (y="LRR [diversity]") + ggtitle("1700m") +   ylim(-3,0.7) +
+  labs(x="") + labs (y="LRR [diversity]") + ggtitle("1700m") + coord_cartesian(ylim = c(-3, 0.7)) +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 12, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); g4 
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")); gr4 
 
 
 #----------------------------------------------------------------------------------------------------
 #All plots combine
-#LRR_WP_biomass_plot <- cowplot::plot_grid(g1, g2, g3 , g4,
-                   #ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv"); LRR_WP_biomass_plot
-
-LRR_WP_biomass_plot <- ggarrange(g1, g3, g2 , g4, ncol = 2, nrow = 2,
-          labels = c('A', 'B','C','D')); LRR_WP_biomass_plot
+LRR_WP_combine_plot <- ggarrange(gr1, gr3, gr2 , gr4, ncol = 2, nrow = 2,
+          labels = c('A', 'B','C','D')); LRR_WP_combine_plot
 
 
 #Saving ordination plot in tiff format (dpi = 600)
-ggsave("LRR_WP_biomass_plot.tiff", width = 20, height = 20, units = "cm", dpi = 600)
+ggsave("LRR_WP_combine_plot.tiff", width = 20, height = 20, units = "cm", dpi = 600)
 
