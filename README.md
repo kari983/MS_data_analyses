@@ -5,7 +5,9 @@ Kari Sogera Iamba, Piotr Szefer, Kenneth Molem, Austin Sau, Gibson Maiah, Vojtec
 
 (A). Datasets
 
-Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" is used solely for the main MS results except for supporting information of alien and native plants within control plots (Figure S2). While datasets "All_Insects_abundance" and "Herbivores_abundance" are used for supporting information. 
+Two datasets are used for the analyses. 
+- Dataset "Combine_Sites_Biomass_2023" is used solely for the main MS results except for supporting information on alien and native plants within control plots (Figure S2). 
+- Dataset "CombineSite_Insects_Orders_data" is used for supporting information. This dataset contains two sheets: sheet 1 (combine_insect_abundance) contains abundance for all insects and sheet 2 (herbivores) contains abundance for herbivores only.
 
 **Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.**  
 (i). Columns
@@ -22,29 +24,17 @@ Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" i
 (ii). Rows
 (1). Rows: Each row contains a plant species with its biomass corresponding to a treatment plot at a specific elevation. Other information such as Family, Plants, Growth_Form and Status further describes the plant species. 
 
-**Below is the explaination of the data that are presented in each columns and rows of "All_Insects_abundance" dataset.** 
+**Below is the explaination of the data that are presented in each columns and rows of "CombineSite_Insects_Orders_data" dataset.** 
 (i). Columns
 (1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
 (2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
 (3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
-(4). Column 4 ("Order") contains the Orders of insects. 
-(5). Column 5 ("Guild") contains the feeding guilds of insects. 
-(6). Column 6 ("Abundance") contains the abundance of the insect Orders.
+(4). Column 4 ("Order") contains the Orders of insects/herbivores. 
+(5). Column 5 ("Guild") contains the feeding guilds of insects/herbivores. 
+(6). Column 6 ("Abundance") contains the abundance of the insects/herbivores Orders.
 
 (ii). Rows
 (1). Rows: Each row contains an insect Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the insect order. 
-
-**Below is the explaination of the data that are presented in each columns and rows of "Herbivores_abundance" dataset.** 
-(i). Columns
-(1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
-(2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
-(3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
-(4). Column 4 ("Order") contains the Orders of herbivores. 
-(5). Column 5 ("Guild") contains the feeding guilds of herbivores. 
-(6). Column 6 ("Abundance") contains the abundance of the herbivore Orders.
-
-(ii). Rows
-(1). Rows: Each row contains an herbivore Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the herbivore order. 
 
 (B). R codes
 
