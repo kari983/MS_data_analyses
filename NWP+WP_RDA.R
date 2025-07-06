@@ -15,47 +15,46 @@ library(ggpp)
 #delete all the variables that are there in the environment
 #rm(list=ls()) 
 
+#Load combined site data
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/data/Combine_Sites_Biomass_2023.xlsx",
+                                        sheet="combine.site.biomass")
+
 ############################################################################################################
 ############################################################################################################
 #RDA CONTSRAINED ORDINATION FOR WOODY BIOMASS
 
 ##############################################################################################################
-# NUMBA WOODY BIOMASS
+# WOODY BIOMASS AT 700M
 ########################################################################################
-# load the data
-numba_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                                 sheet="Numba_biomass_2023")
-
-##############################################################################################################
-#Selecting top species for NUMBA
-numba_top_WP_species1 <-  numba_biomass_data  %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#Selecting top WP species at 700m
+Elev.700m_top_WP_species1 <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
-numba_top_WP_species2 <- numba_top_WP_species1  %>% 
-  reshape2::dcast(Plant_sp ~ Gardens + Treatments, value.var = "Biomass")
+Elev.700m_top_WP_species2 <- Elev.700m_top_WP_species1  %>% 
+  reshape2::dcast(Plant_sp ~ Blocks + Treatments, value.var = "Biomass")
 
-numba_top_WP_species2[is.na(numba_top_WP_species2)] <- 0 #removing NAs
-numba_top_WP_species2
+Elev.700m_top_WP_species2[is.na(Elev.700m_top_WP_species2)] <- 0 #removing NAs
+Elev.700m_top_WP_species2
 
-numba_top_WP_spp  <- numba_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
+Elev.700m_top_WP_spp  <- Elev.700m_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
 
-numba_top_WP_env  <- numba_top_WP_species2[,1:2]
+Elev.700m_top_WP_env  <- Elev.700m_top_WP_species2[,1:2]
 
-numba_top_WP_species2$mean <- rowSums(numba_top_WP_species2[,2:37])/ncol(numba_top_WP_species2[,2:37])
-numba_top_WP_species2
+Elev.700m_top_WP_species2$mean <- rowSums(Elev.700m_top_WP_species2[,2:37])/ncol(Elev.700m_top_WP_species2[,2:37])
+Elev.700m_top_WP_species2
 
 #top 10 species
-numba_top_WP_species2[,-c(2:37)] %>%
+Elev.700m_top_WP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
 ##############################################################################################################
-#Numba NWP data
-numba_WP_species <-  numba_biomass_data  %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#WP species biomass at 700m
+Elev.700m_WP_species <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
@@ -72,28 +71,27 @@ extract_species_code <- function(Plant_sp) {
 }
 
 # Apply the function to create the new column
-numba_WP_species$species_code <- sapply(numba_WP_species$Plant_sp, extract_species_code)
-numba_WP_species
+Elev.700m_WP_species$species_code <- sapply(Elev.700m_WP_species$Plant_sp, extract_species_code)
+Elev.700m_WP_species
 
-numba_WP_species <- transform(numba_WP_species, species_code = toupper(species_code))
-numba_WP_species
+Elev.700m_WP_species <- transform(Elev.700m_WP_species, species_code = toupper(species_code))
+Elev.700m_WP_species
 
-numba_WP_species2 <- numba_WP_species  %>% 
-  reshape2::dcast(Gardens + Treatments ~ species_code, value.var = "Biomass",
+Elev.700m_WP_species2 <- Elev.700m_WP_species  %>% 
+  reshape2::dcast(Blocks + Treatments ~ species_code, value.var = "Biomass",
                   fun.aggregate = sum)
 
-numba_WP_species2[is.na(numba_WP_species2)] <- 0 #removing NAs
-numba_WP_species2
+Elev.700m_WP_species2[is.na(Elev.700m_WP_species2)] <- 0 #removing NAs
+Elev.700m_WP_species2
 
-numba_WP_env  <- numba_WP_species2[,1:2] #data frame/matrix of explanatory (X) variables
+Elev.700m_WP_env  <- Elev.700m_WP_species2[,1:2] #data frame/matrix of explanatory (X) variables
 
-numba_WP_spp  <- numba_WP_species2[,-c(1:2)]#data frame/matrix of response (Y) variables
+Elev.700m_WP_spp  <- Elev.700m_WP_species2[,-c(1:2)]#data frame/matrix of response (Y) variables
 
 
 #STATISTICS
-species.Hellinger1 <- disttransform(numba_WP_spp, method='log')  #log transformation on NWP biomass
-#species.Hellinger1 <- decostand(numba_WP_spp, method='hellinger')  #log transformation on NWP biomass
-Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Gardens), data= numba_WP_env, scaling=2)
+species.Hellinger1 <- disttransform(Elev.700m_WP_spp, method='log')  #log transformation on NWP biomass
+Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
 #scaling="species" or scaling=1 means correlation between species variable. Scaling=2 is corr btw sites and species.
 
 set.seed(10)
@@ -121,7 +119,11 @@ anova.cca(Ordination.model1, by = "axis", permutations = 999, adjust="tukey")
 anova.cca(Ordination.model1, by = "terms", permutations= 999, adjust="tukey") 
 
 #using adonis2 to find which terms are significant
-adonis2(species.Hellinger1 ~ Treatments,data = numba_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
+adonis2(species.Hellinger1 ~ Treatments,data = Elev.700m_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
+
+#pairwise comparison
+anova(Ordination.model1, by = "onedf", perm = 999)
+
 
 #pairwise comparison
 #library(pairwiseAdonis)
@@ -129,11 +131,10 @@ adonis2(species.Hellinger1 ~ Treatments,data = numba_WP_env,method = "euclidean"
 #pairwise.adonis(numba_WP_spp, numba_WP_env$Treatments)
 
 
-#RDA PLOTTING for Numba Woody Biomass
+#RDA PLOTTING for Woody Biomass at 700m
 #step 1
-species.Hellinger1 <- disttransform(numba_WP_spp, method='log')   #disttransform log transformation
-#species.Hellinger1 <- decostand(numba_NWP_spp, method='hellinger')  #log transformation on NWP biomass
-Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Gardens), data= numba_WP_env, scaling=2)
+species.Hellinger1 <- disttransform(Elev.700m_WP_spp, method='log')   #disttransform log transformation
+Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
 #scaling="species" or scaling=1 shows similarities btw objects in response matrix. Scaling=2 shows effect of Treatments or explanatory variable
 
 
@@ -145,7 +146,7 @@ summary(Ordination.model1)
 plot1 <- ordiplot(Ordination.model1, choices=c(1,2))
 
 #step 2
-sites.long1 <- sites.long(plot1, env.data = numba_WP_env)
+sites.long1 <- sites.long(plot1, env.data = Elev.700m_WP_env)
 head(sites.long1)
 
 species.long1 <- species.long(plot1)
@@ -172,7 +173,7 @@ species.long1_filter <- species.long1 %>%
   as.data.frame()
 
 #plotting
-#Adding ordispider diagrams
+#Adding centroids
 centroid1 <- sites.long1 %>%
   group_by(Treatments) %>%
   summarize(axis1=mean(axis1), axis2=mean(axis2))
@@ -181,7 +182,7 @@ sites.long1_axes <- sites.long1[,1:4]
 
 
 #plot with plant species
-numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
+Elev700m_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long1[1, "label"]) +
@@ -214,13 +215,13 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
            label=c("C","I","W","WI"), size=7,
            color=c("red","darkgreen","black","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "darkgreen","black","blue")) +
-  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =22, face = "bold")) + 
+  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =27, face = "bold")) + 
   theme(legend.title = element_text(size=19),legend.text=element_text(size=17)) +
   theme(axis.text=element_text(size=17,face = "bold"),
-        axis.title=element_text(size=17,face = "bold")) +
+        axis.title=element_text(size=20,face = "bold")) +
   theme(axis.title.x = element_text(hjust=0.4, face = "bold"),
         axis.title.y = element_text(hjust=0.6,face = "bold")) +
-  coord_cartesian(xlim = c(-1.5, 2.1), ylim = c(-3, 2)); numba_WP_RDA_plot
+  coord_cartesian(xlim = c(-1.5, 2.1), ylim = c(-3, 2)); Elev700m_WP_RDA_plot
 
 
 #How to read RDA ordination plot
@@ -230,45 +231,40 @@ numba_WP_RDA_plot <- ggplot(sites.long1_axes, aes(x=axis1, y=axis2, color=Treatm
 
 
 ##############################################################################################################
-# YAWAN WOODY BIOMASS
+# WOODY BIOMASS AT 1700m
 ########################################################################################
 
-yawan_biomass_data  <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/google drive_backup/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                                  sheet = "Yawan_biomass_2023")
-
-
-##############################################################################################################
-#Selecting top species for NUMBA
-yawan_top_WP_species1 <-  yawan_biomass_data  %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#Selecting top woody species for 1700m
+Elev.1700m_top_WP_species1 <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
-yawan_top_WP_species2 <- yawan_top_WP_species1  %>% 
-  reshape2::dcast(Plant_sp ~ Gardens + Treatments, value.var = "Biomass")
+Elev.1700m_top_WP_species2 <- Elev.1700m_top_WP_species1  %>% 
+  reshape2::dcast(Plant_sp ~ Blocks + Treatments, value.var = "Biomass")
 
-yawan_top_WP_species2[is.na(yawan_top_WP_species2)] <- 0 #removing NAs
-yawan_top_WP_species2
+Elev.1700m_top_WP_species2[is.na(Elev.1700m_top_WP_species2)] <- 0 #removing NAs
+Elev.1700m_top_WP_species2
 
-yawan_top_WP_spp  <- yawan_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
+Elev.1700m_top_WP_spp  <- Elev.1700m_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
 
-yawan_top_WP_env  <- yawan_top_WP_species2[,1:2]
+Elev.1700m_top_WP_env  <- Elev.1700m_top_WP_species2[,1:2]
 
-yawan_top_WP_species2$mean <- rowSums(yawan_top_WP_species2[,2:37])/ncol(yawan_top_WP_species2[,2:37])
-yawan_top_WP_species2
+Elev.1700m_top_WP_species2$mean <- rowSums(Elev.1700m_top_WP_species2[,2:37])/ncol(Elev.1700m_top_WP_species2[,2:37])
+Elev.1700m_top_WP_species2
 
 #top 10 species
-yawan_top_WP_species2[,-c(2:37)] %>%
+Elev.1700m_top_WP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
 ##############################################################################################################
 
-#Yawan woody biomass 
-yawan_WP_species <-  yawan_biomass_data  %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) %>% 
+#Woody species biomass at 1700m
+Elev.1700m_WP_species <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
 # Function to extract first 4 letters of genus and first 2 letters of species
@@ -284,27 +280,26 @@ extract_species_code <- function(Plant_sp) {
 }
 
 # Apply the function to create the new column
-yawan_WP_species$species_code <- sapply(yawan_WP_species$Plant_sp, extract_species_code)
-yawan_WP_species
+Elev.1700m_WP_species$species_code <- sapply(Elev.1700m_WP_species$Plant_sp, extract_species_code)
+Elev.1700m_WP_species
 
-yawan_WP_species <- transform(yawan_WP_species, species_code = toupper(species_code))
-yawan_WP_species
+Elev.1700m_WP_species <- transform(Elev.1700m_WP_species, species_code = toupper(species_code))
+Elev.1700m_WP_species
 
-yawan_WP_species2 <- yawan_WP_species %>% 
-  reshape2::dcast(Gardens + Treatments ~ species_code, value.var = "Biomass",
+Elev.1700m_WP_species2 <- Elev.1700m_WP_species %>% 
+  reshape2::dcast(Blocks + Treatments ~ species_code, value.var = "Biomass",
                   fun.aggregate = sum)
 
-yawan_WP_species2[is.na(yawan_WP_species2)] <- 0 #removing NAs
-yawan_WP_species2
+Elev.1700m_WP_species2[is.na(Elev.1700m_WP_species2)] <- 0 #removing NAs
+Elev.1700m_WP_species2
 
-yawan_WP_env  <- yawan_WP_species2[,1:2]
+Elev.1700m_WP_env  <- Elev.1700m_WP_species2[,1:2]
 
-yawan_WP_spp  <- yawan_WP_species2[,-c(1:2)]
+Elev.1700m_WP_spp  <- Elev.1700m_WP_species2[,-c(1:2)]
 
 #STATISTICS
-species.Hellinger2 <- disttransform(yawan_WP_spp, method = 'log')
-#species.Hellinger2 <- decostand(yawan_NWP_spp, method = 'standardize')
-Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Gardens), data= yawan_WP_env, scaling = 2)
+species.Hellinger2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
+Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
 
 set.seed(10)
 
@@ -335,22 +330,19 @@ anova.cca(Ordination.model2, by = "terms", permutations= 999)
 #pairwise comparison
 library(pairwiseAdonis)
 set.seed(10)
-pairwise.adonis(yawan_WP_spp, yawan_WP_env$Treatments)
+pairwise.adonis(Elev.1700m_WP_spp, Elev.1700m_WP_env$Treatments)
 
-
-
-
-#RDA PLOTTING for Yawan Woody Biomass
+#RDA PLOTTING for Woody species biomass at 1700m
 #step 1
-species.Hellinger2 <- disttransform(yawan_WP_spp, method = 'log')
-Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Gardens), data= yawan_WP_env, scaling = 2)
+species.Hellinger2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
+Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
 
 summary(Ordination.model2)
 
 plot2 <- ordiplot(Ordination.model2, choices=c(1,2))
 
 #step 2
-sites.long2 <- sites.long(plot2, env.data = yawan_WP_env)
+sites.long2 <- sites.long(plot2, env.data = Elev.1700m_WP_env)
 head(sites.long2)
 
 species.long2 <- species.long(plot2)
@@ -379,7 +371,7 @@ species.long2_filter <- species.long2 %>%
 
 
 #plotting
-#Adding ordispider diagrams
+#Adding centroids
 centroid2 <- sites.long2 %>%
   group_by(Treatments) %>%
   summarize(axis1=mean(axis1), axis2=mean(axis2))
@@ -388,7 +380,7 @@ sites.long2_axes <- sites.long2[,1:4]
 
 
 #Plots with top 10 species
-yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
+Elev1700m_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long2[1, "label"]) +
@@ -420,57 +412,53 @@ yawan_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Treatm
            label=c("C","I","W","WI"), size=7,
            color=c("red", "black","darkorange","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "black","darkorange","blue")) +
-  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =22, face = "bold")) + 
+  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =27, face = "bold")) + 
   theme(legend.title = element_text(size=19),legend.text=element_text(size=17)) +
   theme(axis.text=element_text(size=17,face = "bold"),
-        axis.title=element_text(size=17,face = "bold")) +
+        axis.title=element_text(size=20,face = "bold")) +
   theme(axis.title.x = element_text(hjust=0.43, face = "bold"),
         axis.title.y = element_text(hjust=0.57,face = "bold")) +
-  coord_cartesian(xlim = c(-1.35, 1.8), ylim = c(-3, 2.5)); yawan_WP_RDA_plot
+  coord_cartesian(xlim = c(-1.35, 1.8), ylim = c(-3, 2.5)); Elev1700m_WP_RDA_plot
 
 ############################################################################################################
 ############################################################################################################
 #RDA CONTSRAINED ORDINATION FOR NON-WOODY BIOMASS
 
 ##############################################################################################################
-# NUMBA NON-WOODY BIOMASS
+# NON-WOODY BIOMASS AT 700M
 ########################################################################################
-# load the data
-numba_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                                 sheet="Numba_biomass_2023")
-
-##############################################################################################################
-#Selecting top species for YAWAN
-numba_top_NWP_species1 <-  numba_biomass_data  %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#Selecting top species for 700m
+Elev.700m_top_NWP_species1 <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
-numba_top_NWP_species2 <- numba_top_NWP_species1  %>% 
-  reshape2::dcast(Plant_sp ~ Gardens + Treatments, value.var = "Biomass")
+Elev.700m_top_NWP_species2 <- Elev.700m_top_NWP_species1  %>% 
+  reshape2::dcast(Plant_sp ~ Blocks + Treatments, value.var = "Biomass")
 
-numba_top_NWP_species2[is.na(numba_top_NWP_species2)] <- 0 #removing NAs
-numba_top_NWP_species2
+Elev.700m_top_NWP_species2[is.na(Elev.700m_top_NWP_species2)] <- 0 #removing NAs
+Elev.700m_top_NWP_species2
 
-numba_top_NWP_spp  <- numba_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
+Elev.700m_top_NWP_spp  <- Elev.700m_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
 
-numba_top_NWP_env  <- numba_top_NWP_species2[,1:2]
+Elev.700m_top_NWP_env  <- Elev.700m_top_NWP_species2[,1:2]
 
-numba_top_NWP_species2$mean <- rowSums(numba_top_NWP_species2[,2:37])/ncol(numba_top_NWP_species2[,2:37])
-numba_top_NWP_species2
+Elev.700m_top_NWP_species2$mean <- rowSums(Elev.700m_top_NWP_species2[,2:37])/ncol(Elev.700m_top_NWP_species2[,2:37])
+Elev.700m_top_NWP_species2
 
 #top 10 species
-numba_top_NWP_species2[,-c(2:37)] %>%
+Elev.700m_top_NWP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
 ##############################################################################################################
-#Numba NWP data
-numba_NWP_species <-  numba_biomass_data  %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#NWP species biomass at 700m
+Elev.700m_NWP_species <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
+
 
 # Function to extract first 4 letters of genus and first 2 letters of species
 extract_species_code <- function(Plant_sp) {
@@ -485,28 +473,27 @@ extract_species_code <- function(Plant_sp) {
 }
 
 # Apply the function to create the new column
-numba_NWP_species$species_code <- sapply(numba_NWP_species$Plant_sp, extract_species_code)
-numba_NWP_species
+Elev.700m_NWP_species$species_code <- sapply(Elev.700m_NWP_species$Plant_sp, extract_species_code)
+Elev.700m_NWP_species
 
-numba_NWP_species <- transform(numba_NWP_species, species_code = toupper(species_code))
-numba_NWP_species
+Elev.700m_NWP_species <- transform(Elev.700m_NWP_species, species_code = toupper(species_code))
+Elev.700m_NWP_species
 
-numba_NWP_species2 <- numba_NWP_species  %>% 
-  reshape2::dcast(Gardens + Treatments ~ species_code, value.var = "Biomass",
+Elev.700m_NWP_species2 <- Elev.700m_NWP_species %>% 
+  reshape2::dcast(Blocks + Treatments ~ species_code, value.var = "Biomass",
                   fun.aggregate = sum)
 
-numba_NWP_species2[is.na(numba_NWP_species2)] <- 0 #removing NAs
-numba_NWP_species2
+Elev.700m_NWP_species2[is.na(Elev.700m_NWP_species2)] <- 0 #removing NAs
+Elev.700m_NWP_species2
 
-numba_NWP_env  <- numba_NWP_species2[,1:2] #data frame/matrix of explanatory (X) variables
+Elev.700m_NWP_env  <- Elev.700m_NWP_species2[,1:2] #data frame/matrix of explanatory (X) variables
 
-numba_NWP_spp  <- numba_NWP_species2[,-c(1:2)]#data frame/matrix of response (Y) variables
+Elev.700m_NWP_spp  <- Elev.700m_NWP_species2[,-c(1:2)]#data frame/matrix of response (Y) variables
 
 
 #STATISTICS
-species.Hellinger3 <- disttransform(numba_NWP_spp, method='log')  #log transformation on NWP biomass
-Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Gardens), data= numba_NWP_env, scaling=2)
-#scaling="species" or scaling=1 means correlation between species variable. Scaling=2 is corr btw sites and species.
+species.Hellinger3 <- disttransform(Elev.700m_NWP_spp, method='log')  
+Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
 
 set.seed(10)
 
@@ -532,18 +519,16 @@ anova.cca(Ordination.model3, by = "axis",  permutations = 999)
 anova.cca(Ordination.model3, by = "terms", permutations= 999) 
 
 #using adonis2 to find which terms are significant
-#adonis2(species.Hellinger3 ~ Treatments,data = numba_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
+adonis2(species.Hellinger3 ~ Treatments,data = Elev.700m_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
 
 #pairwise comparison
-anova(Ordination.model3, by = "onedf", perm = 999)
-
+#anova(Ordination.model3, by = "onedf", perm = 999)
 
 
 #RDA PLOTTING for Numba Woody Biomass
 #step 1
-species.Hellinger3 <- disttransform(numba_NWP_spp, method='log')  #log transformation on NWP biomass
-Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Gardens), data= numba_NWP_env, scaling=2)
-#scaling="species" or scaling=1 means correlation between species variable. Scaling=2 is corr btw sites and species.
+species.Hellinger3 <- disttransform(Elev.700m_NWP_spp, method='log')  
+Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
 
 #spec.rda.AIC <- step(Ordination.model1, scope=formula(Ordination.model1, test = "perm"))
 ##choosing the best model based on AIC
@@ -553,7 +538,7 @@ summary(Ordination.model3)
 plot3 <- ordiplot(Ordination.model3, choices=c(1,2))
 
 #step 2
-sites.long3 <- sites.long(plot3, env.data = numba_NWP_env)
+sites.long3 <- sites.long(plot3, env.data = Elev.700m_NWP_env)
 head(sites.long3)
 
 species.long3 <- species.long(plot3)
@@ -580,7 +565,7 @@ species.long3_filter <- species.long3 %>%
 filter(labels %in% c("CODO","PCON","PPAN","ESUM","ACON")) %>% as.data.frame()
 
 #plotting
-#Adding ordispider diagrams
+#Adding centroids
 centroid3 <- sites.long3 %>%
   group_by(Treatments) %>%
   summarize(axis1=mean(axis1), axis2=mean(axis2))
@@ -589,7 +574,7 @@ sites.long3_axes <- sites.long3[,1:4]
 
 
 #plot with plant species
-numba_NWP_RDA_plot <- ggplot(sites.long3_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
+Elev700m_NWP_RDA_plot <- ggplot(sites.long3_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long3[1, "label"]) +
@@ -622,64 +607,51 @@ numba_NWP_RDA_plot <- ggplot(sites.long3_axes, aes(x=axis1, y=axis2, color=Treat
            label=c("C","I","W","WI"), size=7,
            color=c("red", "darkgreen","darkorange","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "darkgreen","darkorange","blue")) +
-  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =22, face = "bold")) + 
+  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =27, face = "bold")) + 
   theme(legend.title = element_text(size=19),legend.text=element_text(size=17)) +
   theme(axis.text=element_text(size=17,face = "bold"),
-        axis.title=element_text(size=17,face = "bold")) +
+        axis.title=element_text(size=20,face = "bold")) +
   theme(axis.title.x = element_text(hjust=0.55, face = "bold"),
         axis.title.y = element_text(hjust=0.5,face = "bold")) +
-  coord_cartesian(xlim = c(-1.8, 1.55), ylim = c(-2, 2)); numba_NWP_RDA_plot
-
-
-#How to read RDA ordination plot
-#Less then 90 degrees, they are positively correlated
-#About 90 degrees, they are uncorrelated
-#Greater then 90 degrees, they are negatively correlated
+  coord_cartesian(xlim = c(-1.8, 1.55), ylim = c(-2, 2)); Elev700m_NWP_RDA_plot 
 
 
 ##############################################################################################################
-# YAWAN NON-WOODY BIOMASS
+# NON-WOODY BIOMASS AT 1700M
 ########################################################################################
 
-yawan_biomass_data  <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/google drive_backup/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                                  sheet = "Yawan_biomass_2023")
-
-
-##############################################################################################################
-#Selecting top species for NUMBA
-yawan_top_NWP_species1 <-  yawan_biomass_data  %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#Selecting top NWP species for 1700m
+Elev.1700m_top_NWP_species1 <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
 
-yawan_top_NWP_species2 <- yawan_top_NWP_species1  %>% 
-  reshape2::dcast(Plant_sp ~ Gardens + Treatments, value.var = "Biomass")
+Elev.1700m_top_NWP_species2 <- Elev.1700m_top_NWP_species1 %>% 
+  reshape2::dcast(Plant_sp ~ Blocks + Treatments, value.var = "Biomass")
 
-yawan_top_NWP_species2[is.na(yawan_top_NWP_species2)] <- 0 #removing NAs
-yawan_top_NWP_species2
+Elev.1700m_top_NWP_species2[is.na(Elev.1700m_top_NWP_species2)] <- 0 #removing NAs
+Elev.1700m_top_NWP_species2
 
-yawan_top_NWP_spp  <- yawan_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
+Elev.1700m_top_NWP_spp  <- Elev.1700m_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
 
-yawan_top_woody_env  <- yawan_top_NWP_species2[,1:2]
+Elev.1700m_top_woody_env  <- Elev.1700m_top_NWP_species2[,1:2]
 
-yawan_top_NWP_species2$mean <- rowSums(yawan_top_NWP_species2[,2:37])/ncol(yawan_top_NWP_species2[,2:37])
-yawan_top_NWP_species2
+Elev.1700m_top_NWP_species2$mean <- rowSums(Elev.1700m_top_NWP_species2[,2:37])/ncol(Elev.1700m_top_NWP_species2[,2:37])
+Elev.1700m_top_NWP_species2
 
 #top 10 species
-yawan_top_NWP_species2[,-c(2:37)] %>%
+Elev.1700m_top_NWP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
 ##############################################################################################################
 
-#Yawan woody biomass 
-yawan_NWP_species <-  yawan_biomass_data  %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) %>% 
+#NWP species biomass at 1700m
+Elev.1700m_NWP_species <-  combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments, Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))  %>%
   arrange(desc(Biomass))
-
-#yawan_NWP_species <- transform(yawan_NWP_species, Plant_sp = as.character(Plant_sp))
 
 # Function to extract first 4 letters of genus and first 2 letters of species
 extract_species_code <- function(Plant_sp) {
@@ -694,27 +666,27 @@ extract_species_code <- function(Plant_sp) {
 }
 
 # Apply the function to create the new column
-yawan_NWP_species$species_code <- sapply(yawan_NWP_species$Plant_sp, extract_species_code)
-yawan_NWP_species
+Elev.1700m_NWP_species$species_code <- sapply(Elev.1700m_NWP_species$Plant_sp, extract_species_code)
+Elev.1700m_NWP_species
 
-yawan_NWP_species <- transform(yawan_NWP_species, species_code = toupper(species_code))
-yawan_NWP_species
+Elev.1700m_NWP_species <- transform(Elev.1700m_NWP_species, species_code = toupper(species_code))
+Elev.1700m_NWP_species
 
-yawan_NWP_species2 <- yawan_NWP_species %>% 
-  reshape2::dcast(Gardens + Treatments ~ species_code, value.var = "Biomass",
+Elev.1700m_NWP_species2 <- Elev.1700m_NWP_species %>% 
+  reshape2::dcast(Blocks + Treatments ~ species_code, value.var = "Biomass",
                   fun.aggregate = sum)
 
-yawan_NWP_species2[is.na(yawan_NWP_species2)] <- 0 #removing NAs
-yawan_NWP_species2
+Elev.1700m_NWP_species2[is.na(Elev.1700m_NWP_species2)] <- 0 #removing NAs
+Elev.1700m_NWP_species2
 
-yawan_NWP_env  <- yawan_NWP_species2[,1:2]
+Elev.1700m_NWP_env  <- Elev.1700m_NWP_species2[,1:2]
 
-yawan_NWP_spp  <- yawan_NWP_species2[,-c(1:2)]
+Elev.1700m_NWP_spp  <- Elev.1700m_NWP_species2[,-c(1:2)]
 
 
 #STATISTICS
-species.Hellinger4 <- disttransform(yawan_NWP_spp, method = 'log')
-Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Gardens), data= yawan_NWP_env, scaling = 2)
+species.Hellinger4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
+Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
 
 set.seed(10)
 
@@ -745,21 +717,21 @@ anova.cca(Ordination.model4, by = "terms", permutations= 999)
 #pairwise comparison
 library(pairwiseAdonis)
 set.seed(10)
-pairwise.adonis(yawan_NWP_spp, yawan_NWP_env$Treatments)
+pairwise.adonis(Elev.1700m_NWP_spp, Elev.1700m_NWP_env$Treatments)
 
 
 
 #RDA PLOTTING for Yawan Woody Biomass
 #step 1
-species.Hellinger4 <- disttransform(yawan_NWP_spp, method = 'log')
-Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Gardens), data= yawan_NWP_env, scaling = 2)
+species.Hellinger4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
+Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
 
 summary(Ordination.model4)
 
 plot4 <- ordiplot(Ordination.model4, choices=c(1,2))
 
 #step 2
-sites.long4 <- sites.long(plot4, env.data = yawan_NWP_env)
+sites.long4 <- sites.long(plot4, env.data = Elev.1700m_NWP_env)
 head(sites.long4)
 
 species.long4 <- species.long(plot4)
@@ -787,7 +759,7 @@ species.long4_filter <- species.long4 %>%
 
 
 #plotting
-#Adding ordispider diagrams
+#Adding centroids
 centroid4 <- sites.long4 %>%
   group_by(Treatments) %>%
   summarize(axis1=mean(axis1), axis2=mean(axis2))
@@ -796,7 +768,7 @@ sites.long4_axes <- sites.long4[,1:4]
 
 
 #Plots with top 10 species
-yawan_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
+Elev1700m_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=Treatments)) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long4[1, "label"]) +
@@ -828,13 +800,13 @@ yawan_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=Treat
            label=c("C","I","W","WI"), size=7,
            color=c("red", "black","darkorange","blue")) +
   scale_color_manual(labels = c("C", "I","W","WI"), values = c("red", "black","darkorange","blue")) +
-  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =22, face = "bold")) + 
+  theme(plot.title=element_text(hjust=0.95, vjust = -12, size =27, face = "bold")) + 
   theme(legend.title = element_text(size=19),legend.text=element_text(size=17)) +
   theme(axis.text=element_text(size=17,face = "bold"),
-        axis.title=element_text(size=17,face = "bold")) +
+        axis.title=element_text(size=20,face = "bold")) +
   theme(axis.title.x = element_text(hjust=0.5, face = "bold"),
         axis.title.y = element_text(hjust=0.5,face = "bold")) +
-  coord_cartesian(xlim = c(-2.5, 0.8), ylim = c(-3, 3)); yawan_NWP_RDA_plot
+  coord_cartesian(xlim = c(-2.5, 0.8), ylim = c(-3, 3)); Elev1700m_NWP_RDA_plot
 
 
 #####---------------------------------------------------------
@@ -846,25 +818,13 @@ library(grid)
 library(cowplot)
 
 
-RDA.combine.spp.plot <-  cowplot::plot_grid(numba_NWP_RDA_plot,  
-                                            numba_WP_RDA_plot,
-                                            yawan_NWP_RDA_plot,
-                                            yawan_WP_RDA_plot, 
+RDA.combine.spp.plot <-  cowplot::plot_grid(Elev700m_WP_RDA_plot,  
+                                            Elev700m_WP_RDA_plot,
+                                            Elev1700m_NWP_RDA_plot,
+                                            Elev1700m_WP_RDA_plot, 
                                             ncol = 2, byrow = TRUE,labels = c('A', 'B', 'C', 'D'),
                                             label_size = 22,align="hv"); RDA.combine.spp.plot
 
-
-#RDA.combine.spp.plot <- ggarrange(numba_NWP_RDA_plot,  
-          #numba_WP_RDA_plot,
-          #yawan_NWP_RDA_plot,
-          #yawan_WP_RDA_plot,
-          #ncol = 2, nrow = 2,
-          #labels = c('A', 'B','C','D')); RDA.combine.spp.plot
-
-
-
-#Saving ordination plot as jpg format
-#ggsave("RDA.combine.spp.plot.jpg", width = 40, height = 37, units = "cm")
 
 #Saving ordination plot in tiff format (dpi = 600)
 ggsave("RDA.combine.spp.plot.tiff", width = 40, height = 37, units = "cm", dpi = 600)
