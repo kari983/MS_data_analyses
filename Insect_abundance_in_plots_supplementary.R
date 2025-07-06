@@ -149,7 +149,7 @@ g2 <- ggplot(Elev1700m_insect_data) +
 #Herbivore abundance
 #################################################################################################
 #load data
-insect_data_herbivore <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/CombineSite_Insects_Orders_data.xlsx",
+insect_data_herbivore <- read_excel("datasets/CombineSite_Insects_Orders_data.xlsx",
                            sheet="herbivores")
 
 #---------------------------------------------------
