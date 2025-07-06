@@ -90,8 +90,8 @@ Elev.700m_WP_spp  <- Elev.700m_WP_species2[,-c(1:2)]#data frame/matrix of respon
 
 
 #STATISTICS
-species.Hellinger1 <- disttransform(Elev.700m_WP_spp, method='log')  #log transformation on NWP biomass
-Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
+species.matrix1 <- disttransform(Elev.700m_WP_spp, method='log')  #log transformation on NWP biomass
+Ordination.model1  <- rda(species.matrix1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
 #scaling="species" or scaling=1 means correlation between species variable. Scaling=2 is corr btw sites and species.
 
 set.seed(10)
@@ -119,10 +119,10 @@ anova.cca(Ordination.model1, by = "axis", permutations = 999, adjust="tukey")
 anova.cca(Ordination.model1, by = "terms", permutations= 999, adjust="tukey") 
 
 #using adonis2 to find which terms are significant
-adonis2(species.Hellinger1 ~ Treatments,data = Elev.700m_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
+adonis2(species.matrix1 ~ Treatments,data = Elev.700m_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
 
 #pairwise comparison
-anova(Ordination.model1, by = "onedf", perm = 999)
+#anova(Ordination.model1, by = "onedf", perm = 999)
 
 
 #pairwise comparison
@@ -134,7 +134,7 @@ anova(Ordination.model1, by = "onedf", perm = 999)
 #RDA PLOTTING for Woody Biomass at 700m
 #step 1
 species.Hellinger1 <- disttransform(Elev.700m_WP_spp, method='log')   #disttransform log transformation
-Ordination.model1  <- rda(species.Hellinger1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
+Ordination.model1  <- rda(species.matrix1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
 #scaling="species" or scaling=1 shows similarities btw objects in response matrix. Scaling=2 shows effect of Treatments or explanatory variable
 
 
@@ -156,7 +156,7 @@ axis.long1 <- axis.long(Ordination.model1, choices=c(1, 2))
 axis.long1
 
 #step 3
-spec.envfit1 <- envfit(plot1, env=species.Hellinger1)
+spec.envfit1 <- envfit(plot1, env=species.matrix1)
 spec.data.envfit1 <- data.frame(r=spec.envfit1$vectors$r, p=spec.envfit1$vectors$pvals)
 species.long1 <- species.long(plot1, spec.data=spec.data.envfit1)
 species.long1
@@ -298,8 +298,8 @@ Elev.1700m_WP_env  <- Elev.1700m_WP_species2[,1:2]
 Elev.1700m_WP_spp  <- Elev.1700m_WP_species2[,-c(1:2)]
 
 #STATISTICS
-species.Hellinger2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
-Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
+species.matrix2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
+Ordination.model2  <- rda(species.matrix2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
 
 set.seed(10)
 
@@ -334,8 +334,8 @@ pairwise.adonis(Elev.1700m_WP_spp, Elev.1700m_WP_env$Treatments)
 
 #RDA PLOTTING for Woody species biomass at 1700m
 #step 1
-species.Hellinger2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
-Ordination.model2  <- rda(species.Hellinger2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
+species.matrix2 <- disttransform(Elev.1700m_WP_spp, method = 'log')
+Ordination.model2  <- rda(species.matrix2 ~ Treatments + Condition(Blocks), data= Elev.1700m_WP_env, scaling = 2)
 
 summary(Ordination.model2)
 
@@ -352,18 +352,13 @@ axis.long2 <- axis.long(Ordination.model2, choices=c(1, 2))
 axis.long2
 
 #step 3
-spec.envfit2 <- envfit(plot2, env=species.Hellinger2)
+spec.envfit2 <- envfit(plot2, env=species.matrix2)
 spec.data.envfit2 <- data.frame(r=spec.envfit2$vectors$r, p=spec.envfit2$vectors$pvals)
 species.long2 <- species.long(plot2, spec.data = spec.data.envfit2)
 species.long2
 
 #species.long2 <- species.long2 %>%
 #arrange(desc(r)) 
-
-#species.long2_filter <- species.long2 %>%
-  #filter(labels %in% c("Pipt.arg","Desm.seq","Homa.ner","Trem,ori",
-                       #"Ficu.pun","Pipe.sub","Pipe.rec","Debr.lon",
-                       #"Pile.mel","Saur.con")) %>% as.data.frame()
 
 species.long2_filter <- species.long2 %>%
   filter(labels %in% c("PARG","DSEQ","HNER","TORI",
@@ -492,8 +487,8 @@ Elev.700m_NWP_spp  <- Elev.700m_NWP_species2[,-c(1:2)]#data frame/matrix of resp
 
 
 #STATISTICS
-species.Hellinger3 <- disttransform(Elev.700m_NWP_spp, method='log')  
-Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
+species.matrix3 <- disttransform(Elev.700m_NWP_spp, method='log')  
+Ordination.model3  <- rda(species.matrix3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
 
 set.seed(10)
 
@@ -519,7 +514,7 @@ anova.cca(Ordination.model3, by = "axis",  permutations = 999)
 anova.cca(Ordination.model3, by = "terms", permutations= 999) 
 
 #using adonis2 to find which terms are significant
-adonis2(species.Hellinger3 ~ Treatments,data = Elev.700m_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
+adonis2(species.matrix3 ~ Treatments,data = Elev.700m_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
 
 #pairwise comparison
 #anova(Ordination.model3, by = "onedf", perm = 999)
@@ -527,8 +522,8 @@ adonis2(species.Hellinger3 ~ Treatments,data = Elev.700m_NWP_env,method = "eucli
 
 #RDA PLOTTING for Numba Woody Biomass
 #step 1
-species.Hellinger3 <- disttransform(Elev.700m_NWP_spp, method='log')  
-Ordination.model3  <- rda(species.Hellinger3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
+species.matrix3 <- disttransform(Elev.700m_NWP_spp, method='log')  
+Ordination.model3  <- rda(species.matrix3 ~ Treatments + Condition(Blocks), data= Elev.700m_NWP_env, scaling=2)
 
 #spec.rda.AIC <- step(Ordination.model1, scope=formula(Ordination.model1, test = "perm"))
 ##choosing the best model based on AIC
@@ -548,18 +543,13 @@ axis.long3 <- axis.long(Ordination.model3, choices=c(1, 2))
 axis.long3
 
 #step 3
-spec.envfit3 <- envfit(plot3, env=species.Hellinger3)
+spec.envfit3 <- envfit(plot3, env=species.matrix3)
 spec.data.envfit3 <- data.frame(r=spec.envfit3$vectors$r, p=spec.envfit3$vectors$pvals)
 species.long3 <- species.long(plot3, spec.data=spec.data.envfit3)
 species.long3
 
 #species.long1 <- species.long1 %>%
 #arrange(desc(r)) 
-
-#species.long3_filter <- species.long3 %>%
-  #filter(labels %in% c("Chro.odo","Pasp.con","Pasp.pan","Erig.sum",
-                       #"Ager.con","Elep.mol","Musa.sp1","Sida.acu",
-                       #"Arth.his","Stac.jam")) %>% as.data.frame()
 
 species.long3_filter <- species.long3 %>%
 filter(labels %in% c("CODO","PCON","PPAN","ESUM","ACON")) %>% as.data.frame()
@@ -685,8 +675,8 @@ Elev.1700m_NWP_spp  <- Elev.1700m_NWP_species2[,-c(1:2)]
 
 
 #STATISTICS
-species.Hellinger4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
-Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
+species.matrix4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
+Ordination.model4  <- rda(species.matrix4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
 
 set.seed(10)
 
@@ -723,8 +713,8 @@ pairwise.adonis(Elev.1700m_NWP_spp, Elev.1700m_NWP_env$Treatments)
 
 #RDA PLOTTING for Yawan Woody Biomass
 #step 1
-species.Hellinger4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
-Ordination.model4  <- rda(species.Hellinger4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
+species.matrix4 <- disttransform(Elev.1700m_NWP_spp, method = 'log')
+Ordination.model4  <- rda(species.matrix4 ~ Treatments + Condition(Blocks), data= Elev.1700m_NWP_env, scaling = 2)
 
 summary(Ordination.model4)
 
@@ -741,18 +731,10 @@ axis.long4 <- axis.long(Ordination.model4, choices=c(1, 2))
 axis.long4
 
 #step 3
-spec.envfit4 <- envfit(plot4, env=species.Hellinger4)
+spec.envfit4 <- envfit(plot4, env=species.matrix4)
 spec.data.envfit4 <- data.frame(r=spec.envfit4$vectors$r, p=spec.envfit4$vectors$pvals)
 species.long4 <- species.long(plot4, spec.data = spec.data.envfit4)
 species.long4
-
-#species.long2 <- species.long2 %>%
-#arrange(desc(r)) 
-
-#species.long4_filter <- species.long4 %>%
-  #filter(labels %in% c("Seta.pal","Desm.int","Pasp.con","Micr.vim",
-                       #"Bide.pil","Cicu.sp1","Phys.min","Aspl.sp1",
-                       #"Pass.lin","Gunn.mac")) %>% as.data.frame()
 
 species.long4_filter <- species.long4 %>%
   filter(labels %in% c("SPAL","DINT","PCON","MVIM","BPIL")) %>% as.data.frame()
