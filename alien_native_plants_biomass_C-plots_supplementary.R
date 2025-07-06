@@ -13,21 +13,18 @@ library(car)
 #clear environment
 #rm(list = ls())
 
+#Load combined site data
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/Combine_Sites_Biomass_2023.xlsx",
+                                        sheet="combine.site.biomass")
+
 ##############################################################################################################
 #STATUS OF WOODY BIOMASS 
 ########################################################################################
-# load the data for Numba (700m) and Yawan (1700m)
-numba_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                         sheet="Numba_biomass_2023")
 
-yawan_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                         sheet = "Yawan_biomass_2023")
-
-#------------------------------------------------------------------------------------
-#(A) Status Woody biomass in Numba (for alien-native woody plants in C-plots)
-numba_w_biomass_Status <- numba_data %>%
-  filter(Plants=="woody" & Treatments=="C")  %>%
-  group_by(Gardens, Status) %>% 
+#(A) Status Woody biomass at 700m (for alien-native woody plants in C-plots)
+Elev700m_WP_biomass_Status <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "woody", Treatments %in% "C")  %>%
+  group_by(Blocks, Status) %>% 
   summarise(Biomass = sum(Biomass_kg))  %>% 
   mutate(prop = Biomass/sum(Biomass),
          prop_logit = logit(prop),  #prop_logit = log(prop/(1-prop))
@@ -37,15 +34,15 @@ numba_w_biomass_Status <- numba_data %>%
 #hist(numba_w_biomass_Status$prop_logit)
 
 #Model for Alien WP
-mod_numba_w.biom_Alien <- lme(prop_logit ~ Status, random= ~1| Gardens, 
-                                 data= numba_w_biomass_Status)
+mod_Elev700m_WP_biomass_Status <- lme(prop_logit ~ Status, random= ~1|Blocks, 
+                                 data= Elev700m_WP_biomass_Status)
 
 # Summary and Anova
-summary(mod_numba_w.biom_Alien)
-anova(mod_numba_w.biom_Alien)
+summary(mod_Elev700m_WP_biomass_Status)
+anova(mod_Elev700m_WP_biomass_Status)
 
 #estimated means (Post Hoc)
-emm.numba_w.biom_Alien <- emmeans(mod_numba_w.biom_Alien, specs = ~ Status)
+emm.Elev700m_WP_biomass_Status <- emmeans(mod_Elev700m_WP_biomass_Status, specs = ~ Status)
 
 #Mean Groupings 
 #cldisplay_numba_w.biom_Alien <- cld(emm.numba_w.biom_Alien, Letters = letters,  alpha = 0.05)
@@ -57,11 +54,11 @@ Alien     <-   c(0,1)
 
 contrast_list_1 <- list("Native  - Alien" =  Native  - Alien)
 
-post_hoc_numba_w.biom_Alien <- contrast(emm.numba_w.biom_Alien, method = contrast_list_1)
-post_hoc_numba_w.biom_Alien
+post_hoc_Elev700m_WP_biomass_Status  <- contrast(emm.Elev700m_WP_biomass_Status, method = contrast_list_1)
+post_hoc_Elev700m_WP_biomass_Status
 
 #Error bar plot with pairwise comparison
-p_w.biom_numba_Alien <- ggplot(numba_w_biomass_Status) +
+p_w.biom_700m_Alien <- ggplot(Elev700m_WP_biomass_Status) +
   aes(x = Status, y = prop_logit) + 
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -77,34 +74,34 @@ p_w.biom_numba_Alien <- ggplot(numba_w_biomass_Status) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_w.biom_numba_Alien 
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_w.biom_700m_Alien
 
 
 #------------------------------------------------------------------------------------
-#(B) Status Woody biomass in Yawan (for alien-native woody plants in C-plots)
-yawan_w_biomass_Status <- yawan_data %>%
-  filter(Plants=="woody" & Treatments=="C")  %>%
-  group_by(Gardens, Treatments, Status) %>% 
+#(B) Status Woody biomass at 1700m (for alien-native woody plants in C-plots)
+Elev1700m_WP_biomass_Status <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "woody", Treatments %in% "C")  %>%
+  group_by(Blocks, Status) %>% 
   summarise(Biomass = sum(Biomass_kg))  %>% 
   mutate(prop = Biomass/sum(Biomass),
          prop_logit = logit(prop),  #prop_logit = log(prop/(1-prop))
-         perc = Biomass/sum(Biomass) * 100)  %>% 
-         as.data.frame()
+         perc = prop * 100)  %>% 
+  as.data.frame()
 
 #hist(numba_w_biomass_Status$prop_logit)
 
 #Model for Alien WP
-mod_yawan_w.biom_Alien <- lme(prop_logit ~ Status, random= ~1| Gardens, 
-                              data= yawan_w_biomass_Status)
+mod_Elev1700m_WP_biomass_Status <- lme(prop_logit ~ Status, random= ~1|Blocks, 
+                              data= Elev1700m_WP_biomass_Status)
 
 # Summary and Anova
-summary(mod_yawan_w.biom_Alien)
-anova(mod_yawan_w.biom_Alien)
+summary(mod_Elev1700m_WP_biomass_Status)
+anova(mod_Elev1700m_WP_biomass_Status)
 
 #estimated means (Post Hoc)
-emm.yawan_w.biom_Alien = emmeans(mod_yawan_w.biom_Alien, specs = ~ Status)
+emm.Elev1700m_WP_biomass_Status = emmeans(mod_Elev1700m_WP_biomass_Status, specs = ~ Status)
 
 #Mean Groupings 
 #cldisplay_yawan_w.biom_Alien <- cld(emm.yawan_w.biom_Alien, Letters = letters,  alpha = 0.05)
@@ -116,11 +113,11 @@ Alien     <-   c(0,1)
 
 contrast_list_2 <- list("Native  - Alien" =  Native  - Alien)
 
-post_hoc_yawan_w.biom_Alien <- contrast(emm.yawan_w.biom_Alien, method = contrast_list_2)
-post_hoc_yawan_w.biom_Alien
+post_hoc_Elev1700m_WP_biomass_Status <- contrast(emm.Elev1700m_WP_biomass_Status, method = contrast_list_2)
+post_hoc_Elev1700m_WP_biomass_Status 
 
 #Error bar plot with pairwise comparison
-p_w.biom_yawan_Alien <- ggplot(yawan_w_biomass_Status) +
+p_w.biom_1700m_Alien <- ggplot(Elev1700m_WP_biomass_Status) +
   aes(x = Status, y = prop_logit) + 
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -136,37 +133,37 @@ p_w.biom_yawan_Alien <- ggplot(yawan_w_biomass_Status) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_w.biom_yawan_Alien
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_w.biom_1700m_Alien
 
 #------------------------------------------------------------------------------------
-#(C) Status Non-Woody biomass in Numba (for alien-native non-woody plants fo C-plots)
-numba_nw_biomass_Status <- numba_data %>%
-  filter(Plants=="non_woody" & Treatments=="C")  %>%
-  group_by(Gardens, Treatments, Status) %>% 
+#(C) Status of Non-Woody biomass at 700m (for alien-native non-woody plants fo C-plots)
+Elev700m_NWP_biomass_Status <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m",Plants %in% "non_woody", Treatments %in% "C")  %>%
+  group_by(Blocks, Status) %>% 
   summarise(Biomass = sum(Biomass_kg))  %>% 
   mutate(prop = Biomass/sum(Biomass),
          prop_logit = logit(prop),  #prop_logit = log(prop/(1-prop))
-         perc = Biomass/sum(Biomass) * 100)  %>% 
+         perc = prop * 100)  %>% 
   as.data.frame()
 
 #hist(numba_w_biomass_Status$prop_logit)
 
 #Model for Alien WP
-mod_numba_nw.biom_Alien <- lme(prop_logit ~ Status, random= ~1| Gardens, 
-                              data= numba_nw_biomass_Status)
+mod_Elev700m_NWP_biomass_Status <- lme(prop_logit ~ Status, random= ~1|Blocks, 
+                              data= Elev700m_NWP_biomass_Status)
 
 # Summary and Anova
-summary(mod_numba_nw.biom_Alien)
-anova(mod_numba_nw.biom_Alien)
+summary(mod_Elev700m_NWP_biomass_Status)
+anova(mod_Elev700m_NWP_biomass_Status)
 
 #estimated means (Post Hoc)
-emm.numba_nw.biom_Alien <- emmeans(mod_numba_nw.biom_Alien, specs = ~ Status)
+emm.Elev700m_NWP_biomass_Status <- emmeans(mod_Elev700m_NWP_biomass_Status, specs = ~ Status)
 
 #Mean Groupings 
-cldisplay_numba_nw.biom_Alien <- cld(emm.numba_nw.biom_Alien, Letters = letters,  alpha = 0.05)
-cldisplay_numba_nw.biom_Alien 
+#cldisplay_numba_nw.biom_Alien <- cld(emm.numba_nw.biom_Alien, Letters = letters,  alpha = 0.05)
+#cldisplay_numba_nw.biom_Alien 
 
 #Explicit
 Native    <-   c(1,0)
@@ -174,14 +171,12 @@ Alien     <-   c(0,1)
 
 contrast_list_3 <- list("Native  - Alien" =  Native  - Alien)
 
-post_hoc_numba_nw.biom_Alien <- contrast(emm.numba_nw.biom_Alien, method = contrast_list_3)
-post_hoc_numba_nw.biom_Alien
-
-plot(post_hoc_numba_nw.biom_Alien) 
+post_hoc_Elev700m_NWP_biomass_Status <- contrast(emm.Elev700m_NWP_biomass_Status, method = contrast_list_3)
+post_hoc_Elev700m_NWP_biomass_Status
 
 
 #Error bar plot with pairwise comparison
-p_nw.biom_numba_Alien <- ggplot(numba_nw_biomass_Status) +
+p_nw.biom_700m_Alien <- ggplot(Elev700m_NWP_biomass_Status) +
   aes(x = Status, y = prop_logit) + 
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -197,41 +192,41 @@ p_nw.biom_numba_Alien <- ggplot(numba_nw_biomass_Status) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_nw.biom_numba_Alien 
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_nw.biom_700m_Alien 
 
 
 #------------------------------------------------------------------------------------
 #(D) Status Non-Woody biomass in Yawan (for alien non-woody plants in C-plots)
-yawan_nw_biomass_Status <- yawan_data %>%
-  filter(Plants=="non_woody" & Treatments=="C")  %>%
-  group_by(Gardens, Treatments, Status) %>% 
+Elev1700m_NWP_biomass_Status <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m",Plants %in% "non_woody", Treatments %in% "C")  %>%
+  group_by(Blocks, Status) %>% 
   summarise(Biomass = sum(Biomass_kg))  %>% 
   mutate(prop = Biomass/sum(Biomass),
          prop_logit = logit(prop),  #prop_logit = log(prop/(1-prop))
-         perc = Biomass/sum(Biomass) * 100)  %>% 
+         perc = prop * 100)  %>% 
   as.data.frame()
 
 #hist(numba_w_biomass_Status$prop_logit)
 
 #Model for Alien WP
-mod_yawan_nw.biom_Alien <- lme(prop_logit ~ Status, random= ~1| Gardens, 
-                               data= yawan_nw_biomass_Status)
+mod_Elev1700m_NWP_biomass_Status <- lme(prop_logit ~ Status, random= ~1|Blocks, 
+                               data= Elev1700m_NWP_biomass_Status)
 
 #mod_yawan_nw.biom_Alien <- gls(prop_logit ~ Status, data= yawan_nw_biomass_Status,
                               #weights = varIdent(form = ~1|Status))
 
 # Summary and Anova
-summary(mod_yawan_nw.biom_Alien)
-anova(mod_yawan_nw.biom_Alien)
+summary(mod_Elev1700m_NWP_biomass_Status)
+anova(mod_Elev1700m_NWP_biomass_Status)
 
 #estimated means (Post Hoc)
-emm.yawan_nw.biom_Alien <- emmeans(mod_yawan_nw.biom_Alien, specs = ~ Status)
+emm.Elev1700m_NWP_biomass_Status <- emmeans(mod_Elev1700m_NWP_biomass_Status, specs = ~ Status)
 
 #Mean Groupings 
-cldisplay_yawan_nw.biom_Alien <- cld(emm.yawan_nw.biom_Alien, Letters = letters,  alpha = 0.05)
-cldisplay_yawan_nw.biom_Alien 
+#cldisplay_yawan_nw.biom_Alien <- cld(emm.Elev1700m_NWP_biomass_Status, Letters = letters,  alpha = 0.05)
+#cldisplay_yawan_nw.biom_Alien 
 
 #Explicit
 Native    <-   c(1,0)
@@ -239,14 +234,11 @@ Alien     <-   c(0,1)
 
 contrast_list_4 <- list("Native  - Alien" =  Native  - Alien)
 
-post_hoc_yawan_nw.biom_Alien <- contrast(emm.yawan_nw.biom_Alien, method = contrast_list_4)
-post_hoc_yawan_nw.biom_Alien
-
-plot(post_hoc_yawan_nw.biom_Alien) 
-
+post_hoc_Elev1700m_NWP_biomass_Status <- contrast(emm.Elev1700m_NWP_biomass_Status, method = contrast_list_4)
+post_hoc_Elev1700m_NWP_biomass_Status
 
 #Error bar plot with pairwise comparison
-p_nw.biom_yawan_Alien <- ggplot(yawan_nw_biomass_Status) +
+p_nw.biom_1700m_Alien <- ggplot(Elev1700m_NWP_biomass_Status) +
   aes(x = Status, y = prop_logit) + 
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
@@ -258,18 +250,18 @@ p_nw.biom_yawan_Alien <- ggplot(yawan_nw_biomass_Status) +
   theme(plot.title = element_text(face = "bold")) + 
   theme(axis.title =element_text(face = "bold")) +
   theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
+        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
   theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_nw.biom_yawan_Alien  
+  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold")) ;p_nw.biom_1700m_Alien
 
 
 
 #---------------------------------------------------------------------------------------------------
 #combine all plot
-C_alien_plot <- cowplot::plot_grid(p_nw.biom_numba_Alien,
-                   p_w.biom_numba_Alien,
-                   p_nw.biom_yawan_Alien,
-                   p_w.biom_yawan_Alien,
+C_alien_plot <- cowplot::plot_grid(p_nw.biom_700m_Alien,
+                   p_w.biom_700m_Alien,
+                   p_nw.biom_1700m_Alien,
+                   p_w.biom_1700m_Alien,
                    ncol = 2, byrow = TRUE,labels = c('A', 'B','C','D'), align="hv"); C_alien_plot 
 
 #Saving ordination plot as jpg format
