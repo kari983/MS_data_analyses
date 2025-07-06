@@ -37,6 +37,8 @@ Two datasets are used for the analyses.
 (1). Rows: Each row contains an insect Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the insect order. 
 
 (B). R codes
+- Use the read_excel function from library(readxl) to load the data. The data are located in the folder called "datasets".
+- For example: read_excel("datasets/Combine_Sites_Biomass_2023.xlsx", sheet="combine.site.biomass") [Combine_Sites_Biomass_2023 is a excel file located in datasets folder with sheet name "combine.site.biomass"]
 
 This repository consists of 7 script files used for the analyses. Five scripts for the main manuscript (MS) section and two for supporting information. They are located within the working directory. These scripts include:
 (i). Main MS section R script files
