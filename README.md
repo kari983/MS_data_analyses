@@ -4,9 +4,10 @@ This is the dataset and code for the MS titled: "Insects and non-woody plants sl
 
 (A). Datasets
 
-Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" is used for main MS results while datasets "All_Insects_abundance" and "Herbivores_abundance" are used for supporting information. 
+Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" is used solely for the main MS results except for supporting information of alien and native plants within control plots (Figure S2). While datasets "All_Insects_abundance" and "Herbivores_abundance" are used for supporting information. 
 
 **Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.**  
+(i). Columns
 (1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
 (2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
 (3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
@@ -17,7 +18,16 @@ Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" i
 (8). Column 8 ("Status") categorises the plants to either alien or native.
 (9). Column 9 ("Biomass_kg") contains the fresh weights of individal plants in kg.
 
+(ii). Rows
+(1). Rows: Each row contains a plant species with its biomass corresponding to a treatment plot at a specific elevation. Other information such as Family, Plants, Growth_Form and Status further describes the plant species. 
+
 **Below is the explaination of the data that are presented in each columns and rows of "CombineSite_Insects_Orders_data" dataset.** 
+(i). Columns
+(1). Column 1 ("Elev") is the abbreviation for Elevation and contains the two elevations; 700m and 1700m in which the experiments were situated. 
+(2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
+
+(ii). Rows
+(1). Rows: Each row contains a plant species with its biomass corresponding to a treatment plot at a specific elevation. Other information such as Family, Plants, Growth_Form and Status further describes the plant species. 
 
 
 
