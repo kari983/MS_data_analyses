@@ -46,7 +46,7 @@ Elev.700m_top_WP_env  <- Elev.700m_top_WP_species2[,1:2]
 Elev.700m_top_WP_species2$mean <- rowSums(Elev.700m_top_WP_species2[,2:37])/ncol(Elev.700m_top_WP_species2[,2:37])
 Elev.700m_top_WP_species2
 
-#top 10 species
+#top 5 species
 Elev.700m_top_WP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
@@ -254,7 +254,7 @@ Elev.1700m_top_WP_env  <- Elev.1700m_top_WP_species2[,1:2]
 Elev.1700m_top_WP_species2$mean <- rowSums(Elev.1700m_top_WP_species2[,2:37])/ncol(Elev.1700m_top_WP_species2[,2:37])
 Elev.1700m_top_WP_species2
 
-#top 10 species
+#top 5 species
 Elev.1700m_top_WP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
@@ -442,7 +442,7 @@ Elev.700m_top_NWP_env  <- Elev.700m_top_NWP_species2[,1:2]
 Elev.700m_top_NWP_species2$mean <- rowSums(Elev.700m_top_NWP_species2[,2:37])/ncol(Elev.700m_top_NWP_species2[,2:37])
 Elev.700m_top_NWP_species2
 
-#top 10 species
+#top 5 species
 Elev.700m_top_NWP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
@@ -630,7 +630,7 @@ Elev.1700m_top_woody_env  <- Elev.1700m_top_NWP_species2[,1:2]
 Elev.1700m_top_NWP_species2$mean <- rowSums(Elev.1700m_top_NWP_species2[,2:37])/ncol(Elev.1700m_top_NWP_species2[,2:37])
 Elev.1700m_top_NWP_species2
 
-#top 10 species
+#top 5 species
 Elev.1700m_top_NWP_species2[,-c(2:37)] %>%
   slice_max(mean, n=5)
 
