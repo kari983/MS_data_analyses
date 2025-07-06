@@ -46,7 +46,19 @@ Three datasets are used for the analyses. Dataset "Combine_Sites_Biomass_2023" i
 (ii). Rows
 (1). Rows: Each row contains an herbivore Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the herbivore order. 
 
+(B). R codes
+
+This repository consists of 7 script files used for the analyses. Five scripts for the main MS section and two for supporting information. They are located within the working directory. These scripts include:
+(i). Main MS section
+(1). Biomass_NWP_WP_combine.R: contains scripts for analyzing biomass of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI]. 
+(2). Diversity_NWP_WP_combine.R: contains scripts for analyzing divesity of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI].  
+(3). LRR_WP_biomass.R: contains scripts for calculation and analyses of log response ratios (LRR) of isolated effects of insects, non-woody plants and their combination based on woody plant biomass corresponding to each treatment [C, I, W, WI]. 
+(4). NWP+WP_RDA.R: contains scripts for analyzing divesity of non-woody plants (NWP) and woody plants (WP) species composition based on biomasses corresponding to each treatment [C, I, W, WI].  
+(5). alien_native_plants_WP.R: contains scripts for analyzing biomass of alien and native plants based on woody plant biomass corresponding to each treatment [C, I, W, WI]. 
+
+(ii). Supporting information
+(1). Insect_abundance_in_plots_supplementary.R: contains scripts for analyzing biomass of non-woody plants (NWP), woody plants (WP) and their combined biomasses corresponding to each treatment [C, I, W, WI]. 
 
 
-This repository consists of 7 scripts used for analysis which include data arrangement, models, model statistics and plotting. They are located within the working directory. These scripts include:
+
 
