@@ -13,63 +13,50 @@ library(car)
 #Clear the environment
 #rm(list=ls()) 
 
-
-######################################################################################################
-#Biomass data for Numba (700m) and Yawan (1700m)
-
-#load the data for Numba (700m)
-numba_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Numba_Biomass_2023.xlsx",
-                                 sheet="Numba_biomass_2023")
-
-#load the data for Yawan (1700m)
-yawan_biomass_data <- read_excel("G:/My Drive/Garden Data_2023/For ANALYSIS/data/Yawan_Biomass_2023.xlsx",
-                                 sheet = "Yawan_biomass_2023")
+#Load combined site data
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/data/Combine_Sites_Biomass_2023.xlsx",
+                                        sheet="combine.site.biomass")
 
 ##################################################################################################
 ##################################################################################################
-#DIVERSITY IN NUMBA (700m)
+#Diversity at 700m
 ########################################################################################
 
-#(A) Total diversity in Numba (700m)
-Total_numba_richness  <-  numba_biomass_data %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) 
+#(A) Total diversity at 700m
+Elev.700m_total_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))
 
-Total_numba_richness2  <- Total_numba_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.700m_total_div2  <- Elev.700m_total_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-Total_numba_richness2[is.na(Total_numba_richness2)] <- 0 #removing NAs and replacing with zeroes
-
-#Richness (Number of plant species)
-Total_numba_richness2$Richness <- specnumber(Total_numba_richness2[,3:198]) 
-Total_numba_richness2
-
-#Simpson diversity index
-Total_numba_richness2$Simpson <- diversity(Total_numba_richness2[,3:198], index="simpson")
-Total_numba_richness2 
+Elev.700m_total_div2[is.na(Elev.700m_total_div2)] <- 0 #removing NAs and replacing with zeroes
 
 #Shannon diversity index
-Total_numba_richness2$Shannon <- diversity(Total_numba_richness2[,3:198], index="shannon")
-Total_numba_richness2
+Elev.700m_total_div2$Shannon <- diversity(Elev.700m_total_div2[,3:197], index="shannon")
+Elev.700m_total_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-Total_numba_richness2$Simpson
-Total_numba_richness2$Dominance  <- dominance_values 
-Total_numba_richness2
+#Richness
+Elev.700m_total_div2$Richness <- specnumber(Elev.700m_total_div2[,3:197])
+Elev.700m_total_div2
+
+##Bartlett Test of Homogeneity of Variances among treatments
+bartlett.test(Richness ~ Treatments, data = Elev.700m_total_div2) #variance is similar for the treatments
 
 #Model
-mod_numba_total_rich <- lme(Shannon ~ Treatments, random= ~1|Gardens, data= Total_numba_richness2) 
+mod_Elev.700m_total_div <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.700m_total_div2) 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_numba_total_rich, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_numba_total_rich, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.700m_total_div, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.700m_total_div, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_numba_total_rich)
-anova(mod_numba_total_rich)
+summary(mod_Elev.700m_total_div)
+anova(mod_Elev.700m_total_div)
 
 #estimated means (Post Hoc)
-emm.numba_total_rich <- emmeans(mod_numba_total_rich, specs = ~ Treatments )
+emm.Elev.700m_total_div <- emmeans(mod_Elev.700m_total_div, specs = ~ Treatments )
 
 #Explicit contrasts
 C    <-  c(1,0,0,0)
@@ -77,78 +64,73 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list7 <- list("C - I"    = C  - I,
+contrast_list1 <- list("C - I"    = C  - I,
                        "C  - W "   = C  - W,
                        "C  - WI "  = C  - WI,
                        "I  - W "   = I  - W,
                        "I  - WI"   = I  - WI,
                        "W  - WI"   = W  - WI)
 
-post_hoc_numba_total_rich  <- contrast(emm.numba_total_rich, method = contrast_list7)
-post_hoc_numba_total_rich
+post_hoc_Elev.700m_total_div  <- contrast(emm.Elev.700m_total_div, method = contrast_list1)
+post_hoc_Elev.700m_total_div
 
 #Error bars with pairwise comparison
-p_numba_total_rich <- ggplot(Total_numba_richness2) +
+g1 <- ggplot(Elev.700m_total_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="") + labs (y="Total diversity [H]") + ggtitle("700m") + ylim(0,2.3) +
+  labs(x="") + labs (y="Total diversity [H]") + ggtitle("700m") + coord_cartesian(ylim = c(0, 2.3)) +
   geom_bracket(
     xmin = c("C"), xmax = c("I"),
     y.position = c(2), label = c("*"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_numba_total_rich
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g1
 
 #-------------------------------------------
-#(B) NWP diversity in Numba (700m)
-NWP_numba_richness  <-  numba_biomass_data %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) 
+#(B) NWP diversity at 700m
+Elev.700m_NWP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m", Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))
 
-NWP_numba_richness2  <- NWP_numba_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.700m_NWP_div2  <- Elev.700m_NWP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-NWP_numba_richness2[is.na(NWP_numba_richness2)] <- 0 #removing NAs and replacing with zeroes
-
-#Richness
-NWP_numba_richness2$Richness <- specnumber(NWP_numba_richness2[,3:83]) #Number of plant species 
-NWP_numba_richness2 
-
-#Simpson diversity index
-NWP_numba_richness2$Simpson <- diversity(NWP_numba_richness2[,3:83], index="simpson")
-NWP_numba_richness2
+Elev.700m_NWP_div2[is.na(Elev.700m_NWP_div2)] <- 0 #removing NAs and replacing with zeroes
 
 #Shannon diversity index
-NWP_numba_richness2$Shannon <- diversity(NWP_numba_richness2[,3:83], index="shannon")
-NWP_numba_richness2
+Elev.700m_NWP_div2$Shannon <- diversity(Elev.700m_NWP_div2[,3:83], index="shannon")
+Elev.700m_NWP_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-NWP_numba_richness2$Simpson
-NWP_numba_richness2$Dominance  <- dominance_values 
-NWP_numba_richness2
+#Richness
+Elev.700m_NWP_div2$Richness <- specnumber(Elev.700m_NWP_div2[,3:83])
+Elev.700m_NWP_div2
+
+##Bartlett Test of Homogeneity of Variances among treatments
+bartlett.test(Richness ~ Treatments, data = Elev.700m_NWP_div2) #variance is similar for treatments
+
 
 #Model
-mod_NWP_numba_richness <- lme(Shannon ~ Treatments, random= ~1|Gardens, data= NWP_numba_richness2) 
+mod_Elev.700m_NWP_richness <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.700m_NWP_div2) 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_NWP_numba_richness, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_NWP_numba_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.700m_NWP_richness, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.700m_NWP_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_NWP_numba_richness)
-anova(mod_NWP_numba_richness)
+summary(mod_Elev.700m_NWP_richness)
+anova(mod_Elev.700m_NWP_richness)
 
 #estimated means (Post Hoc)
-emm.NWP_numba_richness <- emmeans(mod_NWP_numba_richness, specs = ~ Treatments )
+emm.Elev.700m_NWP_richness <- emmeans(mod_Elev.700m_NWP_richness, specs = ~ Treatments)
 
 #Explicit contrasts
 C    <-  c(1,0,0,0)
@@ -156,82 +138,72 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list8 <- list("C - I"    = C  - I,
+contrast_list2 <- list("C - I"    = C  - I,
                        "C  - W "   = C  - W,
                        "C  - WI "  = C  - WI,
                        "I  - W "   = I  - W,
                        "I  - WI"   = I  - WI,
                        "W  - WI"   = W  - WI)
 
-post_hoc_NWP_numba_richness <- contrast(emm.NWP_numba_richness, method = contrast_list8)
-post_hoc_NWP_numba_richness
+post_hoc_Elev.700m_NWP_richness <- contrast(emm.Elev.700m_NWP_richness, method = contrast_list2)
+post_hoc_Elev.700m_NWP_richness
 
 #Error bars with pairwise comparison
-p_NWP_numba_richness <- ggplot(NWP_numba_richness2) +
+g2 <- ggplot(Elev.700m_NWP_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="") + labs (y="NWP diversity [H]") + ggtitle("700m") +  ylim(0,2.3) +
+  labs(x="") + labs (y="NWP diversity [H]") + ggtitle("700m") +  coord_cartesian(ylim = c(0, 2.3)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("W","WI"),
     y.position = c(1.8,2.2), label = c("**","***"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_NWP_numba_richness
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g2
 
+#-------------------------------------------
+#(C) Woody richness at 700m
+Elev.700m_WP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))
 
-#(C) Woody richness in Numba (700m)
-W_numba_richness  <-  numba_biomass_data %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) 
+Elev.700m_WP_div2  <- Elev.700m_WP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-W_numba_richness2  <- W_numba_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
-
-W_numba_richness2[is.na(W_numba_richness2)] <- 0 #removing NAs and replacing with zeroes
-
-#Richness
-W_numba_richness2$Richness <- specnumber(W_numba_richness2[,3:117]) #Number of plant species 
-W_numba_richness2 
-
-#Simpson diversity index
-W_numba_richness2$Simpson <- diversity(W_numba_richness2[,3:117], index="simpson")
-W_numba_richness2#adding simp as a new column name
+Elev.700m_WP_div2[is.na(Elev.700m_WP_div2)] <- 0 #removing NAs and replacing with zeroes
 
 #Shannon diversity index
-W_numba_richness2$Shannon <- diversity(W_numba_richness2[,3:117], index="shannon")
-W_numba_richness2
+Elev.700m_WP_div2$Shannon <- diversity(Elev.700m_WP_div2[,3:116], index="shannon")
+Elev.700m_WP_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-W_numba_richness2$Simpson
-W_numba_richness2$Dominance  <- dominance_values 
-W_numba_richness2
+#Richness
+Elev.700m_WP_div2$Richness <- specnumber(Elev.700m_WP_div2[,3:116])
+Elev.700m_WP_div2
 
 ##Bartlett Test of Homogeneity of Variances among treatments
-bartlett.test(Richness ~ Treatments, data = W_numba_richness2) #variance is not different 
-
+bartlett.test(Richness ~ Treatments, data = Elev.700m_WP_div2) #variance is similar for treatments
 
 #Model
-mod_W_numba_richness <- lme(Shannon ~ Treatments, random= ~1|Gardens, data= W_numba_richness2) 
+mod_Elev.700m_WP_richness <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.700m_WP_div2) 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_W_numba_richness, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_W_numba_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.700m_WP_richness, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.700m_WP_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_W_numba_richness)
-anova(mod_W_numba_richness)
+summary(mod_Elev.700m_WP_richness)
+anova(mod_Elev.700m_WP_richness)
 
 #estimated means (Post Hoc)
-emm.W_numba_richness <- emmeans(mod_W_numba_richness, specs = ~ Treatments )
+emm.Elev.700m_WP_rich <- emmeans(mod_Elev.700m_WP_richness, specs = ~ Treatments )
 
 #Explicit contrast
 C    <-  c(1,0,0,0)
@@ -239,81 +211,77 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list9 <- list("C - I"    = C  - I,
+contrast_list3 <- list("C - I"    = C  - I,
                        "C  - W "   = C  - W,
                        "C  - WI "  = C  - WI,
                        "I  - W "   = I  - W,
                        "I  - WI"   = I  - WI,
                        "W  - WI"   = W  - WI)
 
-post_hoc_W_numba_richness <- contrast(emm.W_numba_richness, method = contrast_list9)
-post_hoc_W_numba_richness 
+post_hoc_Elev.700m_WP_richness <- contrast(emm.Elev.700m_WP_rich, method = contrast_list3)
+post_hoc_Elev.700m_WP_richness 
 
 #Error bars with pairwise comparison
-p_W_numba_richness <- ggplot(W_numba_richness2) +
+g3 <- ggplot(Elev.700m_WP_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="") + labs (y="WP diversity [H]") + ggtitle("700m") + ylim(0,2.3) +
+  labs(x="") + labs (y="WP diversity [H]") + ggtitle("700m") + coord_cartesian(ylim = c(0, 2.3)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("I","WI"),
     y.position = c(1.5,2.2), label = c("*","**"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_W_numba_richness
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g3
 
 
 ##################################################################################################
-#DIVERSITY IN YAWAN (1700m)
+#Diversity at 1700m
 ########################################################################################
 
-#(A) Total diversity Yawan (1700m)
-Total_yawan_richness  <-  yawan_biomass_data %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#(A) Total diversity at 1700m
+Elev.1700m_total_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg))  
 
-Total_yawan_richness2  <- Total_yawan_richness%>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.1700m_total_div2  <- Elev.1700m_total_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-Total_yawan_richness2[is.na(Total_yawan_richness2)] <- 0 #removing NAs
-
-#Richness
-Total_yawan_richness2$Richness <- specnumber(Total_yawan_richness2[,3:190]) #Number of plant species 
-Total_yawan_richness2
-
-#Simpson diversity index
-Total_yawan_richness2$Simpson <- diversity(Total_yawan_richness2[,3:190], index="simpson")
-Total_yawan_richness2 
+Elev.1700m_total_div2[is.na(Elev.1700m_total_div2)] <- 0 #removing NAs
 
 #Shannon diversity index
-Total_yawan_richness2$Shannon <- diversity(Total_yawan_richness2[,3:190], index="shannon")
-Total_yawan_richness2
+Elev.1700m_total_div2$Shannon <- diversity(Elev.1700m_total_div2[,3:190], index="shannon")
+Elev.1700m_total_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-Total_yawan_richness2$Simpson
-Total_yawan_richness2$Dominance  <- dominance_values 
-Total_yawan_richness2
+#Richness
+Elev.1700m_total_div2$Richness <- specnumber(Elev.1700m_total_div2[,3:190])
+Elev.1700m_total_div2
+
+##Bartlett Test of Homogeneity of Variances among treatments
+bartlett.test(Richness ~ Treatments, data = Elev.1700m_total_div2) #variance is similar for treatments
+
 
 #Model
-mod_yawan_total_rich <- lme(Shannon ~ Treatments, random= ~1|Gardens, data= Total_yawan_richness2) 
+mod_Elev.1700m_total_div <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.1700m_total_div2) 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_yawan_total_rich, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_yawan_total_rich, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.1700m_total_div, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.1700m_total_div, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_yawan_total_rich)
-anova(mod_yawan_total_rich)
+summary(mod_Elev.1700m_total_div)
+anova(mod_Elev.1700m_total_div)
 
 #estimated means (Post Hoc)
-emm.yawan_total_rich <- emmeans(mod_yawan_total_rich, specs = ~ Treatments )
+emm.Elev.1700m_total_div <- emmeans(mod_Elev.1700m_total_div, specs = ~ Treatments )
 
 #Explicit contrasts
 C    <-  c(1,0,0,0)
@@ -321,82 +289,73 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list10 <- list("C - I"    = C  - I,
+contrast_list4 <- list("C - I"    = C  - I,
                         "C  - W "   = C  - W,
                         "C  - WI "  = C  - WI,
                         "I  - W "   = I  - W,
                         "I  - WI"   = I  - WI,
                         "W  - WI"   = W  - WI)
 
-post_hoc_yawan_total_rich  <- contrast(emm.yawan_total_rich, method = contrast_list10)
-post_hoc_yawan_total_rich 
+post_hoc_Elev.1700m_total_div  <- contrast(emm.Elev.1700m_total_div, method = contrast_list4)
+post_hoc_Elev.1700m_total_div
 
 #Error bars with pairwise comparison
-p_yawan_total_rich <- ggplot(Total_yawan_richness2) +
+g4 <- ggplot(Elev.1700m_total_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="Total diversity [H]") + ggtitle("1700m") + ylim(0,2.8) +
-  #annotate("text", 
-  #label = c("ab","a","c","bc"),
-  #x = c(1,2,3,4), 
-  #y = c(40,32,48,43), size = 5, colour = c("darkblue")) + 
+  labs(x="Treatments") + labs (y="Total diversity [H]") + ggtitle("1700m") + coord_cartesian(ylim = c(0, 2.8)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("W","WI"),
     y.position = c(2.3,2.7), label = c("*","**"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_yawan_total_rich 
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g4
 
 #-------------------------------------------
-#(B) NWP diversity in Yawan (1700m)
-NWP_yawan_richness  <-  yawan_biomass_data %>%
-  filter(Plants=="non_woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
-  summarise(Biomass = sum(Biomass_kg)) 
+#(B) NWP diversity at 1700m
+Elev.1700m_NWP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m", Plants %in% "non_woody") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
+  summarise(Biomass = sum(Biomass_kg))
 
-NWP_yawan_richness2  <- NWP_yawan_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.1700m_NWP_div2  <- Elev.1700m_NWP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-NWP_yawan_richness2[is.na(NWP_yawan_richness2)] <- 0 #removing NAs
-
-#Richness
-NWP_yawan_richness2$Richness <- specnumber(NWP_yawan_richness2[,3:87]) #Number of plant species 
-NWP_yawan_richness2
-
-#Simpson diversity index
-NWP_yawan_richness2$Simpson <- diversity(NWP_yawan_richness2[,3:83], index="simpson")
-NWP_yawan_richness2#adding simp as a new column name
+Elev.1700m_NWP_div2[is.na(Elev.1700m_NWP_div2)] <- 0 #removing NAs
 
 #Shannon diversity index
-NWP_yawan_richness2$Shannon <- diversity(NWP_yawan_richness2[,3:83], index="shannon")
-NWP_yawan_richness2
+Elev.1700m_NWP_div2$Shannon <- diversity(Elev.1700m_NWP_div2[,3:87], index="shannon")
+Elev.1700m_NWP_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-NWP_yawan_richness2$Simpson
-NWP_yawan_richness2$Dominance  <- dominance_values 
-NWP_yawan_richness2
+#Richness
+Elev.1700m_NWP_div2$Richness <- specnumber(Elev.1700m_NWP_div2[,3:87])
+Elev.1700m_NWP_div2
+
+##Bartlett Test of Homogeneity of Variances among treatments
+bartlett.test(Richness ~ Treatments, data = Elev.1700m_NWP_div2) #variance is similar for the treatments
+
 
 #Model
-mod_NWP_yawan_richness <- lme(Shannon ~ Treatments, random= ~1|Gardens, data= NWP_yawan_richness2) 
+mod_Elev.1700m_NWP_div <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.1700m_NWP_div2) 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_NWP_yawan_richness, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_NWP_yawan_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.1700m_NWP_div, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.1700m_NWP_div, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_NWP_yawan_richness)
-anova(mod_NWP_yawan_richness)
+summary(mod_Elev.1700m_NWP_div)
+anova(mod_Elev.1700m_NWP_div)
 
 #estimated means (Post Hoc)
-emm.NWP_yawan_richness <- emmeans(mod_NWP_yawan_richness, specs = ~ Treatments )
+emm.Elev.1700m_NWP_div <- emmeans(mod_Elev.1700m_NWP_div, specs = ~ Treatments)
 
 #Explicit contrast
 C    <-  c(1,0,0,0)
@@ -404,83 +363,77 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list11 <- list("C - I"    = C  - I,
+contrast_list5 <- list("C - I"    = C  - I,
                         "C  - W "   = C  - W,
                         "C  - WI "  = C  - WI,
                         "I  - W "   = I  - W,
                         "I  - WI"   = I  - WI,
                         "W  - WI"   = W  - WI)
 
-post_hoc_NWP_yawan_richness <- contrast(emm.NWP_yawan_richness, method = contrast_list11)
-post_hoc_NWP_yawan_richness
+post_hoc_Elev.1700m_NWP_div <- contrast(emm.Elev.1700m_NWP_div, method = contrast_list5)
+post_hoc_Elev.1700m_NWP_div
 
 #Error bars with pairwise comparison
-p_NWP_yawan_richness <- ggplot(NWP_yawan_richness2) +
+g5 <- ggplot(Elev.1700m_NWP_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="NWP diversity [H]") + ggtitle("1700m") + ylim(0,2.8) +
+  labs(x="Treatments") + labs (y="NWP diversity [H]") + ggtitle("1700m") + coord_cartesian(ylim = c(0, 2.8)) +
   geom_bracket(
         xmin = c("C","C"), xmax = c("W","WI"),
         y.position = c(2.1,2.5), label = c("***","**"),label.size = 7,
         tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_NWP_yawan_richness
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g5
 
 
 #-------------------------------------------
-#(C) Woody diversity in Yawan (1700m)
-W_yawan_richness  <-  yawan_biomass_data %>%
-  filter(Plants=="woody") %>%
-  group_by(Gardens, Treatments, Plant_sp) %>%
+#(C) Woody diversity at 1700m
+Elev.1700m_WP_div <- combine_elev.biomass_data %>%
+  filter(Elev %in% "1700m", Plants %in% "woody") %>%
+  group_by(Blocks, Treatments,Plant_sp) %>%
   summarise(Biomass = sum(Biomass_kg)) 
 
-W_yawan_richness2  <- W_yawan_richness %>% 
-  reshape2::dcast(Gardens +  Treatments  ~ Plant_sp, value.var = "Biomass")
+Elev.1700m_WP_div2  <- Elev.1700m_WP_div %>% 
+  reshape2::dcast(Blocks +  Treatments  ~ Plant_sp, value.var = "Biomass")
 
-W_yawan_richness2[is.na(W_yawan_richness2)] <- 0 #removing NAs
-
-#Richness
-W_yawan_richness2$Richness <- specnumber(W_yawan_richness2[,3:105]) #Number of plant species 
-W_yawan_richness2
-
-#Simpson diversity index
-W_yawan_richness2$Simpson <- diversity(W_yawan_richness2[,3:105], index="simpson")
-W_yawan_richness2#adding simp as a new column name
+Elev.1700m_WP_div2[is.na(Elev.1700m_WP_div2)] <- 0 #removing NAs
 
 #Shannon diversity index
-W_yawan_richness2$Shannon <- diversity(W_yawan_richness2[,3:105], index="shannon")
-W_yawan_richness2
+Elev.1700m_WP_div2$Shannon <- diversity(Elev.1700m_WP_div2[,3:105], index="shannon")
+Elev.1700m_WP_div2
 
-#Simpson's Dominance Index is the inverse of the Simpson's Index (1/D).
-dominance_values <- 1-W_yawan_richness2$Simpson
-W_yawan_richness2$Dominance  <- dominance_values 
-W_yawan_richness2
+#Richness
+Elev.1700m_WP_div2$Richness <- specnumber(Elev.1700m_WP_div2[,3:105])
+Elev.1700m_WP_div2
 
 ##Bartlett Test of Homogeneity of Variances among treatments
-bartlett.test(Richness ~ Treatments, data = W_yawan_richness2) #variance is different for the treatments
+bartlett.test(Richness ~ Treatments, data = Elev.1700m_WP_div2) #variance is different for the treatments
 
 #Model
-mod_W_yawan_richness <- gls(Shannon ~ Treatments, data= W_yawan_richness2)
-#Since there is heterogeneity of variances (not similar) among treatments, we used the sister model to lme "gls". 
+mod_Elev.1700m_WP_div <- lme(Shannon ~ Treatments, random= ~1|Blocks, data= Elev.1700m_WP_div2,
+                             weights = varIdent(form = ~ 1|Treatments))
+
+#Since variances based on richness differs among treatments, we used the expression ~ 1|Treatments as a one-sided 
+#formula to show that the variance differs between the levels of Treatments.
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_W_yawan_richness, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_W_yawan_richness, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev.1700m_WP_div, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev.1700m_WP_div, ~ resid(., type = "p") | Treatments, abline = c(0, 1)) #by Treatments
 
 # Summary and Anova
-summary(mod_W_yawan_richness)
-anova(mod_W_yawan_richness)
+summary(mod_Elev.1700m_WP_div)
+anova(mod_Elev.1700m_WP_div)
 
 #estimated means (Post Hoc)
-emm.W_yawan_richness <- emmeans(mod_W_yawan_richness, specs = ~ Treatments )
+emm.Elev.1700m_WP_div <- emmeans(mod_Elev.1700m_WP_div, specs = ~ Treatments )
 
 #Explicit contrast
 C    <-  c(1,0,0,0)
@@ -488,54 +441,46 @@ I    <-  c(0,1,0,0)
 W    <-  c(0,0,1,0)
 WI   <-  c(0,0,0,1)
 
-contrast_list12 <- list("C - I"    = C  - I,
+contrast_list6 <- list("C - I"    = C  - I,
                         "C  - W "   = C  - W,
                         "C  - WI "  = C  - WI,
                         "I  - W "   = I  - W,
                         "I  - WI"   = I  - WI,
                         "W  - WI"   = W  - WI)
 
-post_hoc_W_yawan_richness <- contrast(emm.W_yawan_richness, method = contrast_list12)
-post_hoc_W_yawan_richness
+post_hoc_Elev.1700m_WP_div <- contrast(emm.Elev.1700m_WP_div, method = contrast_list6)
+post_hoc_Elev.1700m_WP_div
 
 #Error bars with pairwise comparison
-p_W_yawan_richness <- ggplot(W_yawan_richness2) +
+g6 <- ggplot(Elev.1700m_WP_div2) +
   aes(x = Treatments, y = Shannon) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
   stat_summary(fun.y="mean", size=0.95) +
-  labs(x="Treatments") + labs (y="WP diversity [H]") + ggtitle("1700m") + ylim(0,2.8) +
-  #annotate("text", 
-  #label = c("ab","a","c","bc"),
-  #x = c(1,2,3,4), 
-  #y = c(40,32,48,43), size = 5, colour = c("darkblue")) + 
+  labs(x="Treatments") + labs (y="WP diversity [H]") + ggtitle("1700m") + coord_cartesian(ylim = c(0, 2.8)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("W","WI"),
-    y.position = c(2.2,2.6), label = c("**","**"),label.size = 7,
+    y.position = c(2.2,2.6), label = c("**","***"),label.size = 7,
     tip.length = 0.0, color="blue") +
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5)) +
-  theme(plot.title = element_text(face = "bold")) + 
+  theme(plot.title = element_text(face = "bold",size=15)) + 
   theme(axis.title =element_text(face = "bold")) +
-  theme(axis.text.x = element_text(size = 9.5, angle = 0, hjust = .5, vjust = .5, face = "bold"),
-        axis.text.y = element_text(size = 11, angle = 0, hjust = 1, vjust = 0, face = "bold")) +
-  theme(axis.title.x =element_text(size=13, margin = margin(20,0), face="bold")) +
-  theme(axis.title.y =element_text(size=13, margin = margin(0,8), face="bold"));p_W_yawan_richness
+  theme(axis.text.x = element_text(size = 13, angle = 0, hjust = .5, vjust = .5, face = "bold"),
+        axis.text.y = element_text(size = 13, angle = 0, hjust = 1, vjust = 0.3, face = "bold")) +
+  theme(axis.title.x =element_text(size=14, margin = margin(20,0), face="bold")) +
+  theme(axis.title.y =element_text(size=14, margin = margin(0,8), face="bold"));g6
 
 
 #-----------------------------------------------------------------------------------------------------
 #ALL combine plots for diversity
-Diversity_NWP_WP_plot <- cowplot::plot_grid(p_NWP_numba_richness, 
-                   p_W_numba_richness,
-                   p_numba_total_rich,
-                   p_NWP_yawan_richness, 
-                   p_W_yawan_richness,
-                   p_yawan_total_rich,
+Diversity_NWP_WP_plot <- cowplot::plot_grid(g2, g3, g1,
+                                            g5, g6, g4,
                    ncol = 3, byrow = TRUE,labels = c('A', 'B','C','D','E','F'), align="hv") ; Diversity_NWP_WP_plot
 
 
 #Saving ordination plot in tiff format (dpi = 600)
-ggsave("Diversity_NWP_WP_plot.tiff", width = 20, height = 22, units = "cm", dpi = 600)
+ggsave("Diversity_NWP_WP_plot.tiff", width = 25, height = 22, units = "cm", dpi = 600)
 
 
 
