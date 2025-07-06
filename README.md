@@ -57,10 +57,6 @@ This repository consists of 7 script files used for the analyses. Five scripts f
 (4). Statistical table: TABLE S8 (RDA ordination) is extracted by this function _adonis2(species.matrix ~ Treatments,data = predictor.matrix,method = "euclidean",permutations = 999,by = "onedf")_ and _pairwise.adonis(species.matrix, Treatments)_ from adonis2 and pairwiseAdonis R packages. 
 (5). Statistical table: TABLE S9 (alien woody biomass and richness proportion) is extracted from Explicit contrast of the estimated marginal means (emmean) of linear mixed effects models (LMM) using the function _contrast(alien_WP_emmean, method = contrast_list)_
 
-# summary
-summary(mod_Elev.700m_WP_LRR)
-
-Explicit contrast of the estimated marginal means (emmean) of the linear mixed effects models (LMM) using the function _contrast(emmean, method = contrast_list)_
 
 
 
