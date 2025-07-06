@@ -14,7 +14,7 @@ library(dplyr)
 #Total Insect abundance for separate sites
 #################################################################################################
 #load data
-insect_data1 <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/CombineSite_Insects_Orders_data.xlsx",
+insect_data1 <- read_excel("datasets/CombineSite_Insects_Orders_data.xlsx",
                            sheet="combine_insect_abundance")
 
 #---------------------------------------------------
