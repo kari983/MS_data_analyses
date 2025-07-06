@@ -16,7 +16,7 @@ library(ggpp)
 #rm(list=ls()) 
 
 #Load combined site data
-combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/data/Combine_Sites_Biomass_2023.xlsx",
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/Combine_Sites_Biomass_2023.xlsx",
                                         sheet="combine.site.biomass")
 
 ############################################################################################################
