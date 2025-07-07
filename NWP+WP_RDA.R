@@ -16,7 +16,7 @@ library(ggpp)
 #rm(list=ls()) 
 
 #Load combined site data
-combine_elev.biomass_data <- read_excel("datasets/Combine_Sites_Biomass_2023.xlsx",
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/Combine_Sites_Biomass_2023.xlsx",
                                         sheet="combine.site.biomass")
 
 ############################################################################################################
@@ -118,22 +118,17 @@ anova.cca(Ordination.model1, by = "axis", permutations = 999, adjust="tukey")
 #Which terms are significant?
 anova.cca(Ordination.model1, by = "terms", permutations= 999, adjust="tukey") 
 
-#using adonis2 to find which terms are significant
-adonis2(species.matrix1 ~ Treatments,data = Elev.700m_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
 
-#pairwise comparison
-#anova(Ordination.model1, by = "onedf", perm = 999)
-
-
-#pairwise comparison
-#library(pairwiseAdonis)
-#set.seed(10)
-#pairwise.adonis(numba_WP_spp, numba_WP_env$Treatments)
-
+#pairwise comparison (multiconstrained function in BiodiversityR package)
+set.seed(10)
+multiconstrained(method = "rda", 
+                 formula = species.matrix1 ~ Treatments + Condition(Blocks), 
+                 data = Elev.700m_WP_env,  scaling=2,
+                 distance = "bray")
 
 #RDA PLOTTING for Woody Biomass at 700m
 #step 1
-species.Hellinger1 <- disttransform(Elev.700m_WP_spp, method='log')   #disttransform log transformation
+species.matrix1 <- disttransform(Elev.700m_WP_spp, method='log')  #log transformation on NWP biomas
 Ordination.model1  <- rda(species.matrix1 ~ Treatments + Condition(Blocks), data= Elev.700m_WP_env, scaling=2)
 #scaling="species" or scaling=1 shows similarities btw objects in response matrix. Scaling=2 shows effect of Treatments or explanatory variable
 
@@ -324,13 +319,13 @@ anova.cca(Ordination.model2, by = "axis",  permutations = 999)
 #Which terms are significant?
 anova.cca(Ordination.model2, by = "terms", permutations= 999) 
 
-#using adonis2 to find which terms are significant
-#adonis2(species.Hellinger2 ~ Treatments,data = yawan_WP_env,method = "euclidean",permutations = 999,by = "onedf") 
-
-#pairwise comparison
-library(pairwiseAdonis)
+#pairwise comparison (multiconstrained function in BiodiversityR package)
 set.seed(10)
-pairwise.adonis(Elev.1700m_WP_spp, Elev.1700m_WP_env$Treatments)
+multiconstrained(method = "rda", 
+                 formula = species.matrix2 ~ Treatments  + Condition(Blocks), 
+                 data = Elev.1700m_WP_env, scaling=2,
+                 distance = "bray", 
+                 add = TRUE)
 
 #RDA PLOTTING for Woody species biomass at 1700m
 #step 1
@@ -513,12 +508,13 @@ anova.cca(Ordination.model3, by = "axis",  permutations = 999)
 #Which terms are significant?
 anova.cca(Ordination.model3, by = "terms", permutations= 999) 
 
-#using adonis2 to find which terms are significant
-adonis2(species.matrix3 ~ Treatments,data = Elev.700m_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
-
-#pairwise comparison
-#anova(Ordination.model3, by = "onedf", perm = 999)
-
+#pairwise comparison (multiconstrained function in BiodiversityR package)
+set.seed(10)
+multiconstrained(method = "rda", 
+                 formula = Elev.700m_NWP_spp ~ Treatments + Condition(Blocks), 
+                 data = Elev.700m_NWP_env,  
+                 distance = "bray", scaling=2,
+                 add = TRUE)
 
 #RDA PLOTTING for Numba Woody Biomass
 #step 1
@@ -701,15 +697,12 @@ anova.cca(Ordination.model4, by = "axis",  permutations = 999)
 #Which terms are significant?
 anova.cca(Ordination.model4, by = "terms", permutations= 999) 
 
-#using adonis2 to find which terms are significant
-#adonis2(species.Hellinger4 ~ Treatments,data = yawan_NWP_env,method = "euclidean",permutations = 999,by = "onedf") 
-
-#pairwise comparison
-library(pairwiseAdonis)
-set.seed(10)
-pairwise.adonis(Elev.1700m_NWP_spp, Elev.1700m_NWP_env$Treatments)
-
-
+#pairwise comparison (multiconstrained function in BiodiversityR package)
+multiconstrained(method = "rda", 
+                 formula = Elev.1700m_NWP_spp ~ Treatments + Condition(Blocks), 
+                 data = Elev.1700m_NWP_env, 
+                 distance = "bray", scaling=2,
+                 add = TRUE)
 
 #RDA PLOTTING for Yawan Woody Biomass
 #step 1
