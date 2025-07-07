@@ -50,13 +50,13 @@ This repository consists of 7 script files used for the analyses. Five scripts f
 
 (ii). Supporting information R script files in MS
 (1). Insect_abundance_in_plots_supplementary.R: contains scripts for all insect abundance and herbivore abundance corresponding to each treatment [C, I, W, WI]. 
-(1). alien_native_plants_biomass_C-plots_supplementary.R: contains scripts for analyzing non-woody and woody alien and native plants based on biomass corresponding to each treatment [C, I, W, WI]. 
+(2). alien_native_plants_biomass_C-plots_supplementary.R: contains scripts for analyzing non-woody and woody alien and native plants based on biomass corresponding to each treatment [C, I, W, WI]. 
 
 (C). Information on statistical tables (in supporting information section of MS) 
 (1). Statistical tables: TABLE S1, TABLE S2 and TABLE S3 (biomass) are extracted from Explicit contrast of the estimated marginal means (emmean) of linear mixed effects models (LMM) using the function _contrast(biomass_emmean, method = contrast_list)_
 (2). Statistical tables: TABLE S4, TABLE S5 and TABLE S6 (diversity) are extracted from Explicit contrast of the estimated marginal means (emmean) of linear mixed effects models (LMM) using the function _contrast(diversity_emmean, method = contrast_list)_
 (3). Statistical table: TABLE S7 is extracted by taking the summary of the LRR LMM model using the function _summary function(model)_. Zero was included in the LRR model to set the reference to zero. 
-(4). Statistical table: TABLE S8 (RDA ordination) is extracted by this function _adonis2(species.matrix ~ Treatments,data = predictor.matrix,method = "euclidean",permutations = 999,by = "onedf")_ and _pairwise.adonis(species.matrix, Treatments)_ from adonis2 and pairwiseAdonis R packages. 
+(4). Statistical table: TABLE S8 (RDA ordination) is extracted by the multiconstrained function in BiodiversityR package: _multiconstrained(method = "rda", formula = species.matrix ~ Treatments + Condition(Blocks), data = data,  scaling=2, distance = "bray"_). 
 (5). Statistical table: TABLE S9 (alien woody biomass and richness proportion) is extracted from Explicit contrast of the estimated marginal means (emmean) of linear mixed effects models (LMM) using the function _contrast(alien_WP_emmean, method = contrast_list)_
 
 
