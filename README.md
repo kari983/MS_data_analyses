@@ -6,8 +6,8 @@ Kari Sogera Iamba, Piotr Szefer, Kenneth Molem, Austin Sau, Gibson Maiah, Vojtec
 (A). Datasets
 
 Two datasets are used for the analyses. 
-- Dataset "Combine_Sites_Biomass_2023" is used solely for the main MS results except for supporting information on alien and native plants within control plots (FIGURE S2). 
-- Dataset "CombineSite_Insects_Orders_data" is used for supporting information. This dataset contains two sheets: sheet 1 (combine_insect_abundance) contains abundance for all insects and sheet 2 (herbivores) contains abundance for herbivores only.
+- Dataset "Combine_Sites_Biomass_2023" is used solely for the main MS results except for supporting information on alien and native plants within control plots (FIGURE S2). This dataset has a single sheet called "combine.site.biomass".  
+- Dataset "CombineSite_Insects_Orders_data" is used for supporting information. This dataset contains a single sheet called "Guilds" .
 
 **Below is the explaination of the data that are presented in each columns and rows of "Combine_Sites_Biomass_2023" dataset.**  
 (i). Columns
@@ -30,11 +30,11 @@ Two datasets are used for the analyses.
 (2). Column 2 ("Blocks") are the actual gaps in the forest (0.2 ha) in which the treatment plots were established. 
 (3). Column 3 ("Treatments") contains the treatment plots: Control (C), Insecticide treatment (I), Weeding (W), and Weeding+insecticide treatment (WI). 
 (4). Column 4 ("Order") contains the Orders of insects/herbivores. 
-(5). Column 5 ("Guild") contains the feeding guilds of insects/herbivores. 
+(5). Column 5 ("Guilds") contains the feeding guilds of insects/herbivores. 
 (6). Column 6 ("Abundance") contains the abundance of the insects/herbivores Orders.
 
 (ii). Rows
-(1). Rows: Each row contains an insect Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guild further describes the feeding characteristics of the insect order. 
+(1). Rows: Each row contains an insect Order with its abundance corresponding to a treatment plot at a specific elevation. Other information such as Guilds further describes the trophic characteristics of the insect order. 
 
 (B). R codes
 - Use the read_excel function from library(readxl) to load the data. The data are located in the folder called "datasets".
