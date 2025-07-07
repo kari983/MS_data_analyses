@@ -1,4 +1,4 @@
-s# load the packages
+# load the packages
 library(readxl)
 library(vegan)
 library(ggplot2)
@@ -14,7 +14,7 @@ library(car)
 #rm(list=ls()) 
 
 #Load combined site data
-combine_elev.biomass_data <- read_excel("datasets/Combine_Sites_Biomass_2023.xlsx",
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/Combine_Sites_Biomass_2023.xlsx",
                                         sheet="combine.site.biomass")
 
 ################################################################################################################################
@@ -51,10 +51,6 @@ anova(mod_Elev.700m_biomass_Alien)
 
 #estimated means (Post Hoc)
 emm.Elev.700m_biomass_Alien <- emmeans(mod_Elev.700m_biomass_Alien, specs = ~ Treatments)
-
-#Mean Groupings 
-#cldisplay_numba_biom_Alien <- cld(emm.numba_biom_Alien, Letters = letters,  alpha = 0.05)
-#cldisplay_numba_biom_Alien 
 
 #Explicit contrast
 C_Alien    <-   c(1,0,0,0)
@@ -123,10 +119,6 @@ anova(mod_Elev.1700m_biomass_Alien)
 
 #estimated means (Post Hoc)
 emm.Elev.1700m_biomass_Alien <- emmeans(mod_Elev.1700m_biomass_Alien, specs = ~ Treatments)
-
-#Mean Groupings 
-#cldisplay_yawan_biom_Alien <- cld(emm.yawan_biom_Alien, Letters = letters,  alpha = 0.05)
-#cldisplay_yawan_biom_Alien 
 
 #Explicit contrast
 C_Alien    <-   c(1,0,0,0)
@@ -211,9 +203,6 @@ anova(mod_Elev.700m_rich_Alien_spp)
 
 #estimated means (Post Hoc)
 emm.Elev.700m_rich_Alien_spp <- emmeans(mod_Elev.700m_rich_Alien_spp, specs = ~ Treatments)
-
-#Mean Groupings 
-#cldisplay_numba_rich_Alien <- cld(emm.numba_rich_Alien, Letters = letters,  alpha = 0.05)
 
 #Explicit contrast
 C_Alien    <-   c(1,0,0,0)
@@ -300,10 +289,6 @@ anova(mod_Elev.1700m_biomass_Alien_spp)
 
 #estimated means (Post Hoc)
 emm.Elev.1700m_biomass_Alien_spp <- emmeans(mod_Elev.1700m_biomass_Alien_spp, specs = ~ Treatments)
-
-#Mean Groupings 
-#cldisplay_yawan_rich_Alien <- cld(emm.yawan_rich_Alien, Letters = letters,  alpha = 0.05)
-#cldisplay_yawan_rich_Alien
 
 #Explicit contrast
 C_Alien    <-   c(1,0,0,0)
