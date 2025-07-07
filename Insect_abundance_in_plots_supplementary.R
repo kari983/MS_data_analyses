@@ -11,7 +11,7 @@ library(dplyr)
 #rm(list=ls()) 
 
 #load data
-combine_insects_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/CombineSite_Insects_Orders_data.xlsx",
+combine_insects_data <- read_excel("datasets/CombineSite_Insects_Orders_data.xlsx",
                                   sheet="Guilds")
 
 
