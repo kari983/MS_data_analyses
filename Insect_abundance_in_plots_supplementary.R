@@ -10,40 +10,45 @@ library(dplyr)
 #delete all the variables that are there in the environment
 #rm(list=ls()) 
 
-##########################################################################################################################################
-#Total Insect abundance for separate sites
-#################################################################################################
 #load data
-insect_data1 <- read_excel("datasets/CombineSite_Insects_Orders_data.xlsx",
-                           sheet="combine_insect_abundance")
+combine_insects_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/CombineSite_Insects_Orders_data.xlsx",
+                                  sheet="Guilds")
 
-#---------------------------------------------------
-#Insect abundance at 700m 
-Elev700m_insect_data  <- insect_data1  %>%
-  filter(Elev %in% "700m") %>%
+
+##########################################################################################################################################
+#Other Insects and Arachnids (spiders) abundance for separate sites [Others]
+#################################################################################################
+
+#Other Insect abundance at 700m 
+Elev700m_others_data  <- combine_insects_data  %>%
+  filter(Elev %in% "700m", Guilds %in% "Others") %>%
   group_by(Blocks, Treatments) %>%
   summarise(Abundance.sum = sum(Abundance))
 
 
 #Bartlett test for equality of variances
-bartlett.test(Abundance.sum ~ Treatments, data = Elev700m_insect_data) #variance is different for treatments
+bartlett.test(Abundance.sum ~ Treatments, data = Elev700m_others_data) #variance is different for treatments
 
 ## ## Model 
-mod_Elev700m_insect_abundance <- lme(Abundance.sum ~ Treatments, random= ~1|Blocks, data= Elev700m_insect_data,
+mod_Elev700m_others_abundance <- lme(Abundance.sum ~ Treatments, random= ~1|Blocks, data= Elev700m_others_data,
     weights = varIdent(form = ~ 1|Treatments))
 #Since variances based on biomass differs among treatments, we used the expression ~ 1|Treatments as a one-sided 
 #formula to show that the variance differs between the levels of Treatments.
 
+#summary and Anova
+summary(mod_Elev700m_others_abundance) 
+anova(mod_Elev700m_others_abundance)
 
-summary(mod_Elev700m_insect_abundance) 
-anova(mod_Elev700m_insect_abundance)
+#Check for overdispersion
+dispersion <- sum(residuals(mod_Elev700m_others_abundance, type = "pearson")^2/ df.residual(mod_Elev700m_others_abundance))
+dispersion 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_Elev700m_insect_abundance, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_Elev700m_insect_abundance, ~ resid(., type = "p") |Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev700m_others_abundance, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev700m_others_abundance, ~ resid(., type = "p") |Treatments, abline = c(0, 1)) #by Treatments
 
 # emmeans
-emm.Elev700m_insect_abundance = emmeans(mod_Elev700m_insect_abundance, specs = ~ Treatments, adjust="BH")
+emm.Elev700m_others_abundance = emmeans(mod_Elev700m_others_abundance, specs = ~ Treatments)
 
 #Explicit contrast
 C    <-  c(1,0,0,0)
@@ -58,19 +63,19 @@ contrast_list_1 <- list("C - I"    = C  - I,
                         "I  - WI"   = I  - WI,
                         "W  - WI"   = W  - WI)
 
-post_Elev700m_insect_abundance <- contrast(emm.Elev700m_insect_abundance, method = contrast_list_1)
-post_Elev700m_insect_abundance
+post_Elev700m_others_abundance <- contrast(emm.Elev700m_others_abundance, method = contrast_list_1)
+post_Elev700m_others_abundance
 
 #Errorbar plot
-g1 <- ggplot(Elev700m_insect_data) +
+g1 <- ggplot(Elev700m_others_data) +
   aes(x = Treatments, y = Abundance.sum) +
-  geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
+  geom_jitter(size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
-  stat_summary(fun.y="mean", size=0.4) +
-  labs(x="") + labs (y="Total insect abundance") + ggtitle("700m") + coord_cartesian(ylim = c(0,1600)) +
+  stat_summary(fun.y="mean", size=0.5) +
+  labs(x="") + labs (y="Others abundance (Insects+Arachnids)") + ggtitle("700m") + coord_cartesian(ylim = c(0,200)) +
   geom_bracket(
             xmin = c("C","C"), xmax = c("I","WI"),
-            y.position = c(600,900), label = c("***","***"),label.size = 7,
+            y.position = c(160,190), label = c("***","***"),label.size = 7,
             tip.length = 0.0, color="blue") + 
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5, size = 17)) +
@@ -83,31 +88,36 @@ g1 <- ggplot(Elev700m_insect_data) +
 
 #---------------------------------------------------
 #Insect abundance at 1700m
-Elev1700m_insect_data  <- insect_data1  %>%
-  filter(Elev %in% "1700m") %>%
+Elev1700m_others_data  <- combine_insects_data %>%
+  filter(Elev %in% "1700m", Guilds %in% "Others") %>%
   group_by(Blocks, Treatments) %>%
   summarise(Abundance.sum = sum(Abundance))
 
 
 #Bartlett test for equality of variances
-bartlett.test(Abundance.sum ~ Treatments, data = Elev1700m_insect_data) #variance is different for treatments
+bartlett.test(Abundance.sum ~ Treatments, data = Elev1700m_others_data) #variance is different for treatments
 
 
 ## ## Model 
-mod_Elev1700m_insect_abundance <- lme(Abundance.sum ~ Treatments, random= ~1|Blocks, data= Elev1700m_insect_data,
-                                     weights = varIdent(form = ~ 1|Treatments))
+mod_Elev1700m_others_abundance <- lme(Abundance.sum ~ Treatments, random= ~1|Blocks, data= Elev1700m_others_data,
+                                     weights = varIdent(form = ~ 1|Treatments),control = lmeControl(opt = "optim"))
 #Since variances based on biomass differs among treatments, we used the expression ~ 1|Treatments as a one-sided 
 #formula to show that the variance differs between the levels of Treatments.
+#We added the function: control = lmeControl(opt = "optim") to remove false convergence.
 
-summary(mod_Elev1700m_insect_abundance) 
-anova(mod_Elev1700m_insect_abundance)
+summary(mod_Elev1700m_others_abundance) 
+anova(mod_Elev1700m_others_abundance)
+
+#Check for overdispersion
+dispersion <- sum(residuals(mod_Elev1700m_others_abundance, type = "pearson")^2/ df.residual(mod_Elev1700m_others_abundance))
+dispersion 
 
 ## Test model validation of normal plot of standardized residuals 
-qqnorm(mod_Elev1700m_insect_abundance, ~ resid(., type = "p"), abline = c(0, 1))
-qqnorm(mod_Elev1700m_insect_abundance, ~ resid(., type = "p") |Treatments, abline = c(0, 1)) #by Treatments
+qqnorm(mod_Elev1700m_others_abundance, ~ resid(., type = "p"), abline = c(0, 1))
+qqnorm(mod_Elev1700m_others_abundance, ~ resid(., type = "p") |Treatments, abline = c(0, 1)) #by Treatments
 
 # emmeans
-emm.Elev1700m_insect_abundance = emmeans(mod_Elev1700m_insect_abundance, specs = ~ Treatments, adjust="BH")
+emm.Elev1700m_others_abundance = emmeans(mod_Elev1700m_others_abundance, specs = ~ Treatments, adjust="BH")
 
 #Explicit contrasts
 C    <-  c(1,0,0,0)
@@ -122,19 +132,19 @@ contrast_list_2 <- list("C - I"    = C  - I,
                         "I  - WI"   = I  - WI,
                         "W  - WI"   = W  - WI)
 
-post_Elev1700m_insect_abundance <- contrast(emm.Elev1700m_insect_abundance, method = contrast_list_2)
-post_Elev1700m_insect_abundance
+post_Elev1700m_others_abundance <- contrast(emm.Elev1700m_others_abundance, method = contrast_list_2)
+post_Elev1700m_others_abundance
 
 #Errorbar plot
-g2 <- ggplot(Elev1700m_insect_data) +
+g2 <- ggplot(Elev1700m_others_data) +
   aes(x = Treatments, y = Abundance.sum) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
-  stat_summary(fun.y="mean", size=0.4) +
-  labs(x="Treatments") + labs (y="Total insect abundance") + ggtitle("1700m") + coord_cartesian(ylim = c(0,1600)) +
+  stat_summary(fun.y="mean", size=0.5) +
+  labs(x="Treatments") + labs (y="Others abundance (Insects+Arachnids)") + ggtitle("1700m") + coord_cartesian(ylim = c(0,200)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("I","WI"),
-    y.position = c(600,950), label = c("***","***"),label.size = 7,
+    y.position = c(120,160), label = c("***","**"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5, size = 17)) +
@@ -148,17 +158,12 @@ g2 <- ggplot(Elev1700m_insect_data) +
 ##########################################################################################################################################
 #Herbivore abundance
 #################################################################################################
-#load data
-insect_data_herbivore <- read_excel("datasets/CombineSite_Insects_Orders_data.xlsx",
-                           sheet="herbivores")
 
-#---------------------------------------------------
 #Herbivore abundance at 700m
-Elev700m_herbivore_data  <- insect_data_herbivore %>%
-  filter(Elev %in% "700m") %>%
+Elev700m_herbivore_data  <- combine_insects_data %>%
+  filter(Elev %in% "700m",Guilds %in% "Herbivores") %>%
   group_by(Blocks, Treatments) %>%
   summarise(Abundance.sum = sum(Abundance))
-
 
 #Bartlett test for equality of variances
 bartlett.test(Abundance.sum ~ Treatments, data = Elev700m_herbivore_data) #variance is different for two elevations.
@@ -200,11 +205,11 @@ g3 <- ggplot(Elev700m_herbivore_data) +
   aes(x = Treatments, y = Abundance.sum) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
-  stat_summary(fun.y="mean", size=0.4) +
-  labs(x="") + labs (y="Herbivore abundance") + ggtitle("700m") + coord_cartesian(ylim = c(0,1600)) +
+  stat_summary(fun.y="mean", size=0.5) +
+  labs(x="") + labs (y="Herbivore abundance") + ggtitle("700m") + coord_cartesian(ylim = c(0,1510)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("I","WI"),
-    y.position = c(500,800), label = c("***","***"),label.size = 7,
+    y.position = c(450,800), label = c("***","***"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5, size = 17)) +
@@ -217,8 +222,8 @@ g3 <- ggplot(Elev700m_herbivore_data) +
 
 #---------------------------------------------------
 #Herbivore abundance at 1700m
-Elev1700m_herbivore_data  <- insect_data_herbivore  %>%
-  filter(Elev %in% "1700m") %>%
+Elev1700m_herbivore_data  <- combine_insects_data  %>%
+  filter(Elev %in% "1700m",,Guilds %in% "Herbivores") %>%
   group_by(Blocks, Treatments) %>%
   summarise(Abundance.sum = sum(Abundance))
 
@@ -263,11 +268,11 @@ g4 <- ggplot(Elev1700m_herbivore_data) +
   aes(x = Treatments, y = Abundance.sum) +
   geom_jitter( size=3, shape=20, col= "grey", width = 0.08) +
   stat_summary(fun.data = mean_ci, width=0.2, geom = "errorbar",linewidth = 1) +
-  stat_summary(fun.y="mean", size=0.4) +
-  labs(x="Treatments") + labs (y="Herbivore abundance") + ggtitle("1700m") + coord_cartesian(ylim = c(0,1600)) +
+  stat_summary(fun.y="mean", size=0.5) +
+  labs(x="Treatments") + labs (y="Herbivore abundance") + ggtitle("1700m") + coord_cartesian(ylim = c(0,1510)) +
   geom_bracket(
     xmin = c("C","C"), xmax = c("I","WI"),
-    y.position = c(550,900), label = c("**","*"),label.size = 7,
+    y.position = c(550,1000), label = c("**","*"),label.size = 7,
     tip.length = 0.0, color="blue") + 
   theme_classic() +
   theme(plot.title=element_text(hjust=0.5, size = 17)) +
@@ -286,7 +291,7 @@ insect_abundance_plot <-cowplot::plot_grid(g1, g3, g2 , g4,
 
 
 #Saving ordination plot in tiff format (dpi = 600)
-ggsave("insect_abundance_plot.tiff", width = 20, height = 20, units = "cm", dpi = 600)
+ggsave("insect_abundance_plot.tiff", width = 23, height = 23, units = "cm", dpi = 600)
 
 
   
