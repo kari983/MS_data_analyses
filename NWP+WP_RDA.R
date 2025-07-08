@@ -375,7 +375,7 @@ Elev1700m_WP_RDA_plot <- ggplot(sites.long2_axes, aes(x=axis1, y=axis2, color=Tr
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long2[1, "label"]) +
   ylab(axis.long2[2, "label"]) +  
-  labs(x="RDA1 WP [37.28%]") + labs (y="RDA2 WP [5.43%]") + ggtitle("1700m") +
+  labs(x="RDA1 WP [36.66%]") + labs (y="RDA2 WP [5.33%]") + ggtitle("1700m") +
   scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
   scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
   geom_point(data=sites.long2, 
@@ -565,7 +565,7 @@ Elev700m_NWP_RDA_plot <- ggplot(sites.long3_axes, aes(x=axis1, y=axis2, color=Tr
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long3[1, "label"]) +
   ylab(axis.long3[2, "label"]) +  
-  labs(x="RDA1 NWP [49.08%]") + labs (y="RDA2 NWP [3.09%]") + ggtitle("700m") +
+  labs(x="RDA1 NWP [49.07%]") + labs (y="RDA2 NWP [3.09%]") + ggtitle("700m") +
   scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
   scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
   geom_point(data=sites.long3_axes, 
@@ -748,7 +748,7 @@ Elev1700m_NWP_RDA_plot <- ggplot(sites.long4_axes, aes(x=axis1, y=axis2, color=T
   geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
   xlab(axis.long4[1, "label"]) +
   ylab(axis.long4[2, "label"]) +  
-  labs(x="RDA1 NWP [53.85%]") + labs (y="RDA2 NWP [3.54%]") + ggtitle("1700m") +
+  labs(x="RDA1 NWP [53.95%]") + labs (y="RDA2 NWP [3.55%]") + ggtitle("1700m") +
   scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
   scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
   geom_point(data=sites.long4, 
@@ -793,7 +793,7 @@ library(grid)
 library(cowplot)
 
 
-RDA.combine.spp.plot <-  cowplot::plot_grid(Elev700m_WP_RDA_plot,  
+RDA.combine.spp.plot <-  cowplot::plot_grid(Elev700m_NWP_RDA_plot,  
                                             Elev700m_WP_RDA_plot,
                                             Elev1700m_NWP_RDA_plot,
                                             Elev1700m_WP_RDA_plot, 
