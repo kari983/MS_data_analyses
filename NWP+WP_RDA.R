@@ -16,7 +16,7 @@ library(ggpp)
 #rm(list=ls()) 
 
 #Load combined site data
-combine_elev.biomass_data <- read_excel("datasets/Combine_Sites_Biomass_2023.xlsx",
+combine_elev.biomass_data <- read_excel("C:/Users/Kari Iamba/Desktop/Garden Final Data_2023/Manuscript/Finalized version/Final_MS_R_codes/datasets/Combine_Sites_Biomass_2023.xlsx",
                                         sheet="combine.site.biomass")
 
 ############################################################################################################
@@ -38,10 +38,6 @@ Elev.700m_top_WP_species2 <- Elev.700m_top_WP_species1  %>%
 
 Elev.700m_top_WP_species2[is.na(Elev.700m_top_WP_species2)] <- 0 #removing NAs
 Elev.700m_top_WP_species2
-
-Elev.700m_top_WP_spp  <- Elev.700m_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
-
-Elev.700m_top_WP_env  <- Elev.700m_top_WP_species2[,1:2]
 
 Elev.700m_top_WP_species2$mean <- rowSums(Elev.700m_top_WP_species2[,2:37])/ncol(Elev.700m_top_WP_species2[,2:37])
 Elev.700m_top_WP_species2
@@ -242,10 +238,6 @@ Elev.1700m_top_WP_species2 <- Elev.1700m_top_WP_species1  %>%
 Elev.1700m_top_WP_species2[is.na(Elev.1700m_top_WP_species2)] <- 0 #removing NAs
 Elev.1700m_top_WP_species2
 
-Elev.1700m_top_WP_spp  <- Elev.1700m_top_WP_species2[,2:37]#data frame/matrix of response (Y) variables
-
-Elev.1700m_top_WP_env  <- Elev.1700m_top_WP_species2[,1:2]
-
 Elev.1700m_top_WP_species2$mean <- rowSums(Elev.1700m_top_WP_species2[,2:37])/ncol(Elev.1700m_top_WP_species2[,2:37])
 Elev.1700m_top_WP_species2
 
@@ -429,10 +421,6 @@ Elev.700m_top_NWP_species2 <- Elev.700m_top_NWP_species1  %>%
 
 Elev.700m_top_NWP_species2[is.na(Elev.700m_top_NWP_species2)] <- 0 #removing NAs
 Elev.700m_top_NWP_species2
-
-Elev.700m_top_NWP_spp  <- Elev.700m_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
-
-Elev.700m_top_NWP_env  <- Elev.700m_top_NWP_species2[,1:2]
 
 Elev.700m_top_NWP_species2$mean <- rowSums(Elev.700m_top_NWP_species2[,2:37])/ncol(Elev.700m_top_NWP_species2[,2:37])
 Elev.700m_top_NWP_species2
@@ -618,10 +606,6 @@ Elev.1700m_top_NWP_species2 <- Elev.1700m_top_NWP_species1 %>%
 
 Elev.1700m_top_NWP_species2[is.na(Elev.1700m_top_NWP_species2)] <- 0 #removing NAs
 Elev.1700m_top_NWP_species2
-
-Elev.1700m_top_NWP_spp  <- Elev.1700m_top_NWP_species2[,2:37]#data frame/matrix of response (Y) variables
-
-Elev.1700m_top_woody_env  <- Elev.1700m_top_NWP_species2[,1:2]
 
 Elev.1700m_top_NWP_species2$mean <- rowSums(Elev.1700m_top_NWP_species2[,2:37])/ncol(Elev.1700m_top_NWP_species2[,2:37])
 Elev.1700m_top_NWP_species2
